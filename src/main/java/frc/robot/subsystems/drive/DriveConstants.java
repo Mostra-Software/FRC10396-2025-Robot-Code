@@ -21,7 +21,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 4.8;
+  public static final double maxSpeedMetersPerSec = 1.8;
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = 0.57785;
   public static final double wheelBase = 0.57785;
@@ -35,10 +35,10 @@ public class DriveConstants {
       };
 
   // Zeroed rotation values for each module, see setup instructions
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(0);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(0);
+  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(3.107 + Math.PI);
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(2.270 + Math.PI);
+  public static final Rotation2d backLeftZeroRotation = new Rotation2d(3.112 + Math.PI);
+  public static final Rotation2d backRightZeroRotation = new Rotation2d(2.514 + Math.PI);
 
   // Device CAN IDs
   public static final int pigeonCanId = 10;
@@ -60,17 +60,22 @@ public class DriveConstants {
       (50. / 16.) * (17. / 27.) * (45. / 15.); // SDS MK4C
   public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
 
+  public static final double turnMotorReduction = 12.8;
+
   // Drive encoder configuration
   public static final double driveEncoderPositionFactor =
-      2 * Math.PI / driveMotorReduction; // Rotor Rotations -> Wheel Radians
+      2 * Math.PI / turnMotorReduction; // Rotor Rotations -> Wheel Radians
   public static final double driveEncoderVelocityFactor =
-      (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
+      (2 * Math.PI) / 60.0 / turnMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
   // Drive PID configuration
-  public static final double driveKp = 0.0;
+  // PID configs to modify the behavior
+  public static final double driveKp = 0.00001;
   public static final double driveKd = 0.0;
   public static final double driveKs = 0.0;
   public static final double driveKv = 0.1;
+
+  // Dont touych if you dont know what these are.
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
   public static final double driveSimKs = 0.0;
@@ -79,7 +84,6 @@ public class DriveConstants {
   // Turn motor configuration
   public static final boolean turnInverted = false;
   public static final int turnMotorCurrentLimit = 20;
-  public static final double turnMotorReduction = 12.8;
   public static final DCMotor turnGearbox = DCMotor.getNeo550(1);
 
   // Turn encoder configuration
@@ -90,8 +94,9 @@ public class DriveConstants {
       (2 * Math.PI) / 60.0 / turnMotorReduction; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 0.3;
-  public static final double turnKd = 0.0;
+  public static final double turnKp = 10;
+  public static final double turnKd = 0.5;
+
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
   public static final double turnPIDMinInput = 0; // Radians

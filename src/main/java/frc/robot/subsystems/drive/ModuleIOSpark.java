@@ -108,6 +108,8 @@ public class ModuleIOSpark implements ModuleIO {
     turnController = turnSpark.getClosedLoopController();
 
     var canConfig = new CANcoderConfiguration();
+    canConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+    canCoder.getConfigurator().apply(canConfig);
 
     // Configure drive motor
     var driveConfig = new SparkFlexConfig();
@@ -147,7 +149,7 @@ public class ModuleIOSpark implements ModuleIO {
     // Configure turn motor
     var turnConfig = new SparkFlexConfig();
     turnConfig
-        // .inverted(turnInverted)
+        .inverted(turnInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(turnMotorCurrentLimit)
         .voltageCompensation(12.0);
@@ -181,7 +183,9 @@ public class ModuleIOSpark implements ModuleIO {
     tryUntilOk(
         turnSpark,
         5,
-        () -> turnEncoder.setPosition(canCoder.getAbsolutePosition().getValueAsDouble() * Math.PI));
+        () ->
+            turnEncoder.setPosition(
+                canCoder.getAbsolutePosition().getValueAsDouble() * Math.PI * 2));
 
     // Create odometry queues
     timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
