@@ -54,7 +54,7 @@ public class DriveConstants {
   public static final int backRightTurnCanId = 22;
 
   // Drive motor configuration
-  public static final int driveMotorCurrentLimit = 50;
+  public static final int driveMotorCurrentLimit = 40;
   public static final double wheelRadiusMeters = Units.inchesToMeters(2);
   public static final double driveMotorReduction =
       (50. / 16.) * (17. / 27.) * (45. / 15.); // SDS MK4C
@@ -70,10 +70,10 @@ public class DriveConstants {
 
   // Drive PID configuration
   // PID configs to modify the behavior
-  public static final double driveKp = 0.00001;
+  public static final double driveKp = 0.00004;
   public static final double driveKd = 0.0;
-  public static final double driveKs = 0.0;
-  public static final double driveKv = 0.1;
+  public static final double driveKs = 0.11769;
+  public static final double driveKv = 0.21596;
 
   // Dont touych if you dont know what these are.
   public static final double driveSimP = 0.05;
