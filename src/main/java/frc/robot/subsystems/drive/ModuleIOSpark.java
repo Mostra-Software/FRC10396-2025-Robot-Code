@@ -107,6 +107,7 @@ public class ModuleIOSpark implements ModuleIO {
     driveController = driveSpark.getClosedLoopController();
     turnController = turnSpark.getClosedLoopController();
 
+    // Signed CANCODER mode
     var canConfig = new CANcoderConfiguration();
     canConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
     canCoder.getConfigurator().apply(canConfig);
@@ -185,7 +186,7 @@ public class ModuleIOSpark implements ModuleIO {
         5,
         () ->
             turnEncoder.setPosition(
-                canCoder.getAbsolutePosition().getValueAsDouble() * Math.PI * 2));
+                canCoder.getAbsolutePosition().getValueAsDouble() * Math.PI * 2)); // radians
 
     // Create odometry queues
     timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();

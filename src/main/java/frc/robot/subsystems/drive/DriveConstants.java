@@ -69,13 +69,12 @@ public class DriveConstants {
       (2 * Math.PI) / 60.0 / turnMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
   // Drive PID configuration
-  // PID configs to modify the behavior
   public static final double driveKp = 0.00004;
   public static final double driveKd = 0.0;
   public static final double driveKs = 0.11769;
   public static final double driveKv = 0.21596;
 
-  // Dont touych if you dont know what these are.
+  // SIM Variables
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
   public static final double driveSimKs = 0.0;
