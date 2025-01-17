@@ -13,7 +13,6 @@
 
 package frc.robot.subsystems.drive;
 
-import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkBase;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -108,9 +107,9 @@ public class SparkOdometryThread {
       boolean isValid = true;
       for (int i = 0; i < sparkSignals.size(); i++) {
         sparkValues[i] = sparkSignals.get(i).getAsDouble();
-        if (sparks.get(i).getLastError() != REVLibError.kOk) {
-          isValid = false;
-        }
+        //   if (sparks.get(i).getLastError() != REVLibError.kOk) {
+        //    isValid = false;
+        // }
       }
 
       // If valid, add values to queues
