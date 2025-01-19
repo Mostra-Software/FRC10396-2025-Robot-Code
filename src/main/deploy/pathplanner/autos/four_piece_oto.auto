@@ -7,37 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New New Path"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
+            "pathName": "Start_H_Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of New New Path"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "pathName": "H_HP"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of Copy of New New Path"
+            "pathName": "HP_C_SCORE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C_HP"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HP_D_SCORE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D_HP"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "testautos",
+  "folder": null,
   "choreoAuto": false
 }
