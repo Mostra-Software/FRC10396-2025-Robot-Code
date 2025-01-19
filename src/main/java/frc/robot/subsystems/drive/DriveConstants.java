@@ -21,7 +21,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 1.8;
+  public static final double maxSpeedMetersPerSec = 5.0;
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = 0.57785;
   public static final double wheelBase = 0.57785;
@@ -35,10 +35,10 @@ public class DriveConstants {
       };
 
   // Zeroed rotation values for each module, see setup instructions
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(3.107 + Math.PI);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(2.270 + Math.PI);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(3.112 + Math.PI);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(2.514 + Math.PI);
+  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(3.107);
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(2.270);
+  public static final Rotation2d backLeftZeroRotation = new Rotation2d(3.112);
+  public static final Rotation2d backRightZeroRotation = new Rotation2d(2.514);
 
   // Device CAN IDs
   public static final int pigeonCanId = 10;
@@ -55,7 +55,7 @@ public class DriveConstants {
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 40;
-  public static final double wheelRadiusMeters = Units.inchesToMeters(2);
+  public static final double wheelRadiusMeters = Units.inchesToMeters(4.121);
   public static final double driveMotorReduction =
       (50. / 16.) * (17. / 27.) * (45. / 15.); // SDS MK4C
   public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
