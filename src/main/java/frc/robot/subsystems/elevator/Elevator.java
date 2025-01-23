@@ -15,11 +15,9 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.ControlType;
+
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
@@ -39,13 +37,21 @@ public class Elevator extends SubsystemBase {
     return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
   }
 
-  public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
+  public Command runElevatorMaxMotion(int height){
     return runEnd(
-        () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 12.0),
+        () -> io.elevatorRunMaxMotion((height)),
         () -> io.setVoltage(0.0));
   }
 
-  public void runElevatorMaxMotion(double height){
-    elevatorRunMaxMotion(height);
+  public boolean homeSequenceSlowPointReached(){
+    return inputs.homeSequenceSlowPointReached;
+  }
+
+  public boolean homeReached(){
+    return inputs.homeReached;
+  }
+
+  public void resetEncoder(){
+    io.resetEncoder();
   }
 }

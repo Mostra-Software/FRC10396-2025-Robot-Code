@@ -22,6 +22,8 @@ public interface ElevatorIO {
     public double velocityMetersPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
+    public boolean homeReached = false;
+    public boolean homeSequenceSlowPointReached = false;
   }
 
   /** Update the set of loggable inputs. */
@@ -29,5 +31,9 @@ public interface ElevatorIO {
 
   /** Run open loop at the specified voltage. */
   public default void setVoltage(double volts) {}
+
+  public default void elevatorRunMaxMotion(int height){}
+
+  public default void resetEncoder(){}
 
 }

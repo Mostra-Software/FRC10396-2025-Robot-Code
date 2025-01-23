@@ -23,6 +23,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.elevator.ElevatorHoming;
+import frc.robot.commands.elevator.RunElevatorClosedLoop;
+import frc.robot.commands.elevator.RunElevatorOpenLoop;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -160,6 +163,28 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+   // Elevator Openloop Up
+   controller.rightBumper().whileTrue(new RunElevatorOpenLoop(true, 0.5, elevator));
+
+    // Elevator Openloop Down
+    controller.rightBumper().whileTrue(new RunElevatorOpenLoop(false, 0.5, elevator));
+
+    // Elevator ClosedLoop Controls
+
+    //Home
+    controller.povDown().whileTrue(new ElevatorHoming(elevator));
+
+    // L1
+    controller.povLeft().whileTrue(new RunElevatorClosedLoop(1, elevator));
+
+    //L2
+    controller.povRight().whileTrue(new RunElevatorClosedLoop(2, elevator));
+
+    //L3
+    controller.povUp().whileTrue(new RunElevatorClosedLoop(3, elevator));
+
+    //L4
+    controller.y().whileTrue(new RunElevatorClosedLoop(4, elevator));
   }
 
   /**

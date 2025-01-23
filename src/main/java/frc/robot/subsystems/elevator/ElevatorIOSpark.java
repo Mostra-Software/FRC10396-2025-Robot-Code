@@ -29,6 +29,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 import java.util.function.DoubleSupplier;
 
@@ -41,6 +42,9 @@ public class ElevatorIOSpark implements ElevatorIO {
  // Because right motor will be slave of left motor, no need for encoder?
  // private final RelativeEncoder right_encoder = elevtator_right.getEncoder();
 
+   public static final DigitalInput elevator_sensor = new DigitalInput(sensorID);
+
+
   public ElevatorIOSpark() {
 
     closedLoopController = masterMotor.getClosedLoopController();
@@ -48,13 +52,14 @@ public class ElevatorIOSpark implements ElevatorIO {
     var master_config = new SparkMaxConfig();
     var slave_config = new SparkMaxConfig();
 
+
     master_config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     slave_config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
 
     master_config
         .encoder
-        .positionConversionFactor(22 * Units.inchesToMeters(0.25)/ motorReduction) //Meters
-        .velocityConversionFactor(22 * Units.inchesToMeters(0.25) / 60.0 / motorReduction)//Meters per Seconds
+        .positionConversionFactor(2*(22 * Units.inchesToMeters(0.25)/ motorReduction)) //Meters
+        .velocityConversionFactor(2*(22 * Units.inchesToMeters(0.25) / 60.0 / motorReduction))//Meters per Seconds
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
 
@@ -69,6 +74,12 @@ public class ElevatorIOSpark implements ElevatorIO {
         .maxVelocity(maxVelocity)
         .maxAcceleration(maxAcceleration)
         .allowedClosedLoopError(1);
+
+      master_config.softLimit
+      .forwardSoftLimit(forwardSoftLimit)
+      .reverseSoftLimit(reverseSoftLimit)
+      .forwardSoftLimitEnabled(true)
+      .reverseSoftLimitEnabled(true);
 
       slave_config
         .follow(masterCanId, true)
@@ -90,6 +101,12 @@ public class ElevatorIOSpark implements ElevatorIO {
         .maxAcceleration(maxAcceleration)
         .allowedClosedLoopError(1);
 
+      slave_config.softLimit
+      .forwardSoftLimit(forwardSoftLimit)
+      .reverseSoftLimit(reverseSoftLimit)
+      .forwardSoftLimitEnabled(true)
+      .reverseSoftLimitEnabled(true);
+
       
     tryUntilOk(
       masterMotor,
@@ -105,12 +122,17 @@ public class ElevatorIOSpark implements ElevatorIO {
           slaveMotor.configure(
             slave_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-        
+
 
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
+
+    inputs.homeReached = elevator_sensor.get();
+
+    inputs.homeSequenceSlowPointReached = (masterEncoder.getPosition() == homeSequenceSlowPoint);
+
     ifOk(masterMotor, masterEncoder::getPosition, (value) -> inputs.positionMeters = value);
     ifOk(masterMotor, masterEncoder::getVelocity, (value) -> inputs.velocityMetersPerSec = value);
     ifOk(
@@ -134,7 +156,12 @@ public class ElevatorIOSpark implements ElevatorIO {
   }
 
   @Override
-  public void elevatorRunMaxMotion(double height){
+  public void elevatorRunMaxMotion(int height){
       closedLoopController.setReference(height, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+  }
+
+  @Override
+  public void resetEncoder(){
+    masterEncoder.setPosition(0);
   }
 }

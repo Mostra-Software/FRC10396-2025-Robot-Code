@@ -7,14 +7,16 @@ package frc.robot.commands.elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
 
-public class RunElevatorClosedLoop extends Command {
+public class RunElevatorOpenLoop extends Command {
 
   private Elevator elevator;
-  private int height;
+  private Boolean up;
+  private double speed;
 
-  public RunElevatorClosedLoop(int height, Elevator elevator) {
+  public RunElevatorOpenLoop(Boolean up, double speed, Elevator elevator) {
     this.elevator = elevator;
-    this.height = height;
+    this.up = up;
+    this.speed = speed;
     addRequirements(elevator);
   }
 
@@ -23,33 +25,10 @@ public class RunElevatorClosedLoop extends Command {
 
   @Override
   public void execute() {
-    switch(height){
-
-      //Home
-      case 0:
-      elevator.runElevatorMaxMotion(0);
-
-      //L1
-      case 1:
-      elevator.runElevatorMaxMotion(0);
-
-      //L2
-      case 2:
-      elevator.runElevatorMaxMotion(0);
-
-      //L3
-      case 3:
-      elevator.runElevatorMaxMotion(0);
-
-      //L4
-      case 4:
-      elevator.runElevatorMaxMotion(0);
-
-      break;
-      
-      default:
-      elevator.runPercent(0);
-      
+    if(up){
+      elevator.runPercent(speed);
+    }else{
+      elevator.runPercent(-speed);
     }
     
     
@@ -58,7 +37,6 @@ public class RunElevatorClosedLoop extends Command {
   @Override
   public void end(boolean interrupted) {
     elevator.runPercent(0);
-   
   }
 
   @Override
