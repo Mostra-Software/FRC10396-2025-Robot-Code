@@ -6,6 +6,7 @@ package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.leds.Leds;
 
 public class RunElevatorClosedLoop extends Command {
 
@@ -19,46 +20,45 @@ public class RunElevatorClosedLoop extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    Leds.getInstance().elevator_moving = true;
+  }
 
   @Override
   public void execute() {
-    switch(height){
+    switch (height) {
 
-      //Home
+        // Home
       case 0:
-      elevator.runElevatorMaxMotion(0);
+        elevator.runElevatorMaxMotion(0);
 
-      //L1
+        // L1
       case 1:
-      elevator.runElevatorMaxMotion(0);
+        elevator.runElevatorMaxMotion(0);
 
-      //L2
+        // L2
       case 2:
-      elevator.runElevatorMaxMotion(0);
+        elevator.runElevatorMaxMotion(0);
 
-      //L3
+        // L3
       case 3:
-      elevator.runElevatorMaxMotion(0);
+        elevator.runElevatorMaxMotion(0);
 
-      //L4
+        // L4
       case 4:
-      elevator.runElevatorMaxMotion(0);
+        elevator.runElevatorMaxMotion(0);
 
-      break;
-      
+        break;
+
       default:
-      elevator.runPercent(0);
-      
+        elevator.runPercent(0);
     }
-    
-    
   }
 
   @Override
   public void end(boolean interrupted) {
+    Leds.getInstance().elevator_moving = false;
     elevator.runPercent(0);
-   
   }
 
   @Override

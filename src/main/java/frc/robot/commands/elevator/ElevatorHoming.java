@@ -19,9 +19,9 @@ public class ElevatorHoming extends SequentialCommandGroup {
     this.elevator = elevator;
 
     addCommands(
-        new RunCommand(() -> elevator.runElevatorMaxMotion(homeSlowpoint), elevator).until(elevator::homeSequenceSlowPointReached),
+        new RunCommand(() -> elevator.runElevatorMaxMotion(homeSlowpoint), elevator)
+            .until(elevator::homeSequenceSlowPointReached),
         new RunElevatorOpenLoop(false, 0.2, elevator).until(elevator::homeReached),
-        new RunCommand(() -> elevator.resetEncoder(), elevator)
-        );
+        new RunCommand(() -> elevator.resetEncoder(), elevator));
   }
 }

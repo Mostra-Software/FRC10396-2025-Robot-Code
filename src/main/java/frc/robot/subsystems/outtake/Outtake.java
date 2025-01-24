@@ -11,42 +11,38 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.outtake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-public class Elevator extends SubsystemBase {
-  private final ElevatorIO io;
-  private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+public class Outtake extends SubsystemBase {
+  private final OuttakeIO io;
+  private final OuttakeIOInputsAutoLogged inputs = new OuttakeIOInputsAutoLogged();
 
-  public Elevator(ElevatorIO io) {
+  public Outtake(OuttakeIO io) {
     this.io = io;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Elevator", inputs);
+    Logger.processInputs("Outtake", inputs);
   }
 
   public void runPercent(double percent) {
     io.setVoltage(percent * 12.0);
   }
 
-  public void runElevatorMaxMotion(int height) {
-    io.elevatorRunMaxMotion((height));
+  public void outtakeRunClosedLoopVelocity(int rpm) {
+    io.outtakeRunClosedLoopVelocity((rpm));
   }
 
-  public boolean homeSequenceSlowPointReached() {
-    return inputs.homeSequenceSlowPointReached;
+  public boolean coralVisibleRear() {
+    return inputs.coralVisibleRear;
   }
 
-  public boolean homeReached() {
-    return inputs.homeReached;
-  }
-
-  public void resetEncoder() {
-    io.resetEncoder();
+  public boolean coralVisibleFront() {
+    return inputs.coralVisibleFront;
   }
 }

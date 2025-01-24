@@ -11,28 +11,29 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.outtake;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ElevatorIO {
+public interface OuttakeIO {
   @AutoLog
-  public static class ElevatorIOInputs {
-    public double positionMeters = 0.0;
-    public double velocityMetersPerSec = 0.0;
+  public static class OuttakeIOInputs {
+    public double position = 0.0;
+    public double velocityRPM = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
-    public boolean homeReached = false;
-    public boolean homeSequenceSlowPointReached = false;
+
+    public boolean coralVisibleFront = false;
+    public boolean coralVisibleRear = false;
   }
 
   /** Update the set of loggable inputs. */
-  public default void updateInputs(ElevatorIOInputs inputs) {}
+  public default void updateInputs(OuttakeIOInputs inputs) {}
 
   /** Run open loop at the specified voltage. */
   public default void setVoltage(double volts) {}
 
-  public default void elevatorRunMaxMotion(int height) {}
-
   public default void resetEncoder() {}
+
+  public default void outtakeRunClosedLoopVelocity(int rpm) {}
 }

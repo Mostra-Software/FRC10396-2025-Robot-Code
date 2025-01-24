@@ -20,12 +20,16 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.ElevatorHoming;
 import frc.robot.commands.elevator.RunElevatorClosedLoop;
 import frc.robot.commands.elevator.RunElevatorOpenLoop;
+import frc.robot.commands.outtake.Intake;
+import frc.robot.commands.outtake.RunIntakeOpenLoop;
+import frc.robot.commands.outtake.Shoot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -36,7 +40,10 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
-
+import frc.robot.subsystems.outtake.Outtake;
+import frc.robot.subsystems.outtake.OuttakeIO;
+import frc.robot.subsystems.outtake.OuttakeIOSim;
+import frc.robot.subsystems.outtake.OuttakeIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -49,9 +56,12 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Elevator elevator;
+  private final Outtake outtake;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driverJoy = new CommandXboxController(0);
+
+  private final CommandJoystick opeartorJoy = new CommandJoystick(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -70,6 +80,7 @@ public class RobotContainer {
                 new ModuleIOSpark(3));
 
         elevator = new Elevator(new ElevatorIOSpark());
+        outtake = new Outtake(new OuttakeIOSpark());
         break;
 
       case SIM:
@@ -83,6 +94,7 @@ public class RobotContainer {
                 new ModuleIOSim());
 
         elevator = new Elevator(new ElevatorIOSim());
+        outtake = new Outtake(new OuttakeIOSim());
         break;
 
       default:
@@ -94,11 +106,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        
-        elevator = new Elevator(new ElevatorIO() {});
-        break;
 
-        
+        elevator = new Elevator(new ElevatorIO() {});
+        outtake = new Outtake(new OuttakeIO() {});
+        break;
     }
 
     // Set up auto routines
@@ -135,25 +146,25 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driverJoy.getLeftY(),
+            () -> -driverJoy.getLeftX(),
+            () -> -driverJoy.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
+    driverJoy
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -driverJoy.getLeftY(),
+                () -> -driverJoy.getLeftX(),
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
+    driverJoy
         .b()
         .onTrue(
             Commands.runOnce(
@@ -163,28 +174,40 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-   // Elevator Openloop Up
-   controller.rightBumper().whileTrue(new RunElevatorOpenLoop(true, 0.5, elevator));
+    // Elevator Openloop Up
+    opeartorJoy.button(0).whileTrue(new RunElevatorOpenLoop(true, 0.5, elevator));
 
     // Elevator Openloop Down
-    controller.rightBumper().whileTrue(new RunElevatorOpenLoop(false, 0.5, elevator));
+    opeartorJoy.button(0).whileTrue(new RunElevatorOpenLoop(false, 0.5, elevator));
 
     // Elevator ClosedLoop Controls
 
-    //Home
-    controller.povDown().whileTrue(new ElevatorHoming(elevator));
+    // Home
+    opeartorJoy.button(0).whileTrue(new ElevatorHoming(elevator));
 
     // L1
-    controller.povLeft().whileTrue(new RunElevatorClosedLoop(1, elevator));
+    opeartorJoy.button(0).whileTrue(new RunElevatorClosedLoop(1, elevator));
 
-    //L2
-    controller.povRight().whileTrue(new RunElevatorClosedLoop(2, elevator));
+    // L2
+    opeartorJoy.button(0).whileTrue(new RunElevatorClosedLoop(2, elevator));
 
-    //L3
-    controller.povUp().whileTrue(new RunElevatorClosedLoop(3, elevator));
+    // L3
+    opeartorJoy.button(0).whileTrue(new RunElevatorClosedLoop(3, elevator));
 
-    //L4
-    controller.y().whileTrue(new RunElevatorClosedLoop(4, elevator));
+    // L4
+    opeartorJoy.button(0).whileTrue(new RunElevatorClosedLoop(4, elevator));
+
+    // Outtake OpenLoop Shoot
+    opeartorJoy.button(0).whileTrue(new RunIntakeOpenLoop(true, 0.5, outtake));
+
+    // Outtake Openloop Intake
+    opeartorJoy.button(1).whileTrue(new RunIntakeOpenLoop(true, 0.3, outtake));
+
+    // Outtake ClosedLoop Shoot
+    opeartorJoy.button(2).whileTrue(new Shoot(outtake));
+
+    // Outtake ClosedLoop Intake
+    opeartorJoy.button(3).whileTrue(new Intake(outtake));
   }
 
   /**
