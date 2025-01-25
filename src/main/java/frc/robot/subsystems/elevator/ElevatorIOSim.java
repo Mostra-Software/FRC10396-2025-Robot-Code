@@ -17,6 +17,7 @@ import static frc.robot.subsystems.elevator.ElevatorConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.sim.SparkFlexSim;
+import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -24,25 +25,34 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkRelativeEncoder;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 
 public class ElevatorIOSim implements ElevatorIO {
   private DCMotor gearbox = DCMotor.getNeoVortex(2);
-  private DCMotorSim sim =
-      new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getNeoVortex(2), 0.004, motorReduction),
-          gearbox);
   private SparkFlex masterMotor = new SparkFlex(11, MotorType.kBrushless);
   private SparkFlexSim simFlex = new SparkFlexSim(masterMotor, gearbox);
-  SparkRelativeEncoder encoder = (SparkRelativeEncoder) masterMotor.getEncoder();
+  private SparkRelativeEncoderSim encoder = new SparkRelativeEncoderSim(masterMotor);
   private SparkClosedLoopController closedLoopController = masterMotor.getClosedLoopController();
+
+  private final ElevatorSim m_elevatorSim =
+      new ElevatorSim(
+          DCMotor.getNeoVortex(2),
+          ElevatorConstants.motorReduction,
+          ElevatorConstants.kCarriageMass,
+          ElevatorConstants.PD22t,
+          ElevatorConstants.kMinElevatorHeightMeters,
+          ElevatorConstants.kMaxElevatorHeightMeters,
+          true,
+          0,
+          0.01,
+          0.0);
 
   private double appliedVolts = 0.0;
   private double setpoint = 0.0;
@@ -104,12 +114,19 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    simFlex.iterate(maxVelocity, PD22t, PIDTolerance);
 
-    // inputs.positionMeters = sim.getAngularPositionRad();
+    m_elevatorSim.setInput(simFlex.getAppliedOutput() * RoboRioSim.getVInVoltage());
+    m_elevatorSim.update(0.020);
+
+    simFlex.iterate(m_elevatorSim.getVelocityMetersPerSecond(), RoboRioSim.getVInVoltage(), 0.020);
+    encoder.iterate(m_elevatorSim.getVelocityMetersPerSecond(), 0.02);
+
+    RoboRioSim.setVInVoltage(
+        BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
+
     inputs.positionMeters = encoder.getPosition();
     inputs.velocityMetersPerSec = encoder.getVelocity();
-    inputs.appliedVolts = appliedVolts;
+    inputs.appliedVolts = simFlex.getBusVoltage();
     inputs.currentAmps = simFlex.getMotorCurrent();
     inputs.isHome = isHome;
     inputs.setpoint = setpoint;
@@ -123,6 +140,7 @@ public class ElevatorIOSim implements ElevatorIO {
   @Override
   public void setVoltage(double volts) {
     appliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    masterMotor.set(appliedVolts);
   }
 
   @Override

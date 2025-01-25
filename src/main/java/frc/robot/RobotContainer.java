@@ -27,9 +27,6 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.HomeElevator;
 import frc.robot.commands.elevator.SetElevatorHeight;
 import frc.robot.commands.elevator.SetElevatorPercent;
-import frc.robot.commands.outtake.Intake;
-import frc.robot.commands.outtake.RunIntakeOpenLoop;
-import frc.robot.commands.outtake.Shoot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -178,36 +175,21 @@ public class RobotContainer {
     opeartorJoy.button(0).whileTrue(new SetElevatorPercent(0.5, elevator));
 
     // Elevator Openloop Down
-    opeartorJoy.button(0).whileTrue(new SetElevatorPercent(-0.5, elevator));
+    opeartorJoy.button(1).whileTrue(new SetElevatorPercent(-0.5, elevator));
 
     // Elevator ClosedLoop Controls
 
     // Home
-    opeartorJoy.button(0).whileTrue(new HomeElevator(elevator));
+    opeartorJoy.button(3).whileTrue(new HomeElevator(elevator));
 
     // L1
-    opeartorJoy.button(0).whileTrue(new SetElevatorHeight(1, elevator));
-
-    // L2
-    opeartorJoy.button(0).whileTrue(new SetElevatorHeight(2, elevator));
-
-    // L3
-    opeartorJoy.button(0).whileTrue(new SetElevatorHeight(3, elevator));
-
-    // L4
-    opeartorJoy.button(0).whileTrue(new SetElevatorHeight(4, elevator));
-
-    // Outtake OpenLoop Shoot
-    opeartorJoy.button(0).whileTrue(new RunIntakeOpenLoop(true, 0.5, outtake));
-
-    // Outtake Openloop Intake
-    opeartorJoy.button(1).whileTrue(new RunIntakeOpenLoop(true, 0.3, outtake));
+    opeartorJoy.button(4).whileTrue(new SetElevatorHeight(0.4, elevator));
 
     // Outtake ClosedLoop Shoot
-    opeartorJoy.button(2).whileTrue(new Shoot(outtake));
+    // opeartorJoy.button(2).whileTrue(new Shoot(outtake));
 
     // Outtake ClosedLoop Intake
-    opeartorJoy.button(3).whileTrue(new Intake(outtake));
+    // opeartorJoy.button(3).whileTrue(new Intake(outtake));
   }
 
   /**

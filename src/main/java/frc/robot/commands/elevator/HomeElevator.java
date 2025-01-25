@@ -23,6 +23,7 @@ public class HomeElevator extends SequentialCommandGroup {
             .until(() -> elevator.isAtSetpoint()),
         new RunCommand(() -> elevator.runPercent(-0.2), elevator)
             .until(() -> elevator.getCurrent() > ElevatorConstants.homingCurrent),
+        new RunCommand(() -> elevator.runPercent(0), elevator),
         new RunCommand(() -> elevator.resetEncoder(), elevator));
   }
 }

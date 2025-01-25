@@ -27,6 +27,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.MathUtil;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorIOSpark implements ElevatorIO {
@@ -160,7 +161,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   @Override
   public void setVoltage(double volts) {
-    masterMotor.setVoltage(volts);
+    masterMotor.setVoltage(MathUtil.clamp(volts, -12.0, 12.0));
   }
 
   @Override
