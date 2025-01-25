@@ -24,9 +24,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.elevator.ElevatorHoming;
-import frc.robot.commands.elevator.RunElevatorClosedLoop;
-import frc.robot.commands.elevator.RunElevatorOpenLoop;
+import frc.robot.commands.elevator.HomeElevator;
+import frc.robot.commands.elevator.SetElevatorHeight;
+import frc.robot.commands.elevator.SetElevatorPercent;
 import frc.robot.commands.outtake.Intake;
 import frc.robot.commands.outtake.RunIntakeOpenLoop;
 import frc.robot.commands.outtake.Shoot;
@@ -175,27 +175,27 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Elevator Openloop Up
-    opeartorJoy.button(0).whileTrue(new RunElevatorOpenLoop(true, 0.5, elevator));
+    opeartorJoy.button(0).whileTrue(new SetElevatorPercent(0.5, elevator));
 
     // Elevator Openloop Down
-    opeartorJoy.button(0).whileTrue(new RunElevatorOpenLoop(false, 0.5, elevator));
+    opeartorJoy.button(0).whileTrue(new SetElevatorPercent(-0.5, elevator));
 
     // Elevator ClosedLoop Controls
 
     // Home
-    opeartorJoy.button(0).whileTrue(new ElevatorHoming(elevator));
+    opeartorJoy.button(0).whileTrue(new HomeElevator(elevator));
 
     // L1
-    opeartorJoy.button(0).whileTrue(new RunElevatorClosedLoop(1, elevator));
+    opeartorJoy.button(0).whileTrue(new SetElevatorHeight(1, elevator));
 
     // L2
-    opeartorJoy.button(0).whileTrue(new RunElevatorClosedLoop(2, elevator));
+    opeartorJoy.button(0).whileTrue(new SetElevatorHeight(2, elevator));
 
     // L3
-    opeartorJoy.button(0).whileTrue(new RunElevatorClosedLoop(3, elevator));
+    opeartorJoy.button(0).whileTrue(new SetElevatorHeight(3, elevator));
 
     // L4
-    opeartorJoy.button(0).whileTrue(new RunElevatorClosedLoop(4, elevator));
+    opeartorJoy.button(0).whileTrue(new SetElevatorHeight(4, elevator));
 
     // Outtake OpenLoop Shoot
     opeartorJoy.button(0).whileTrue(new RunIntakeOpenLoop(true, 0.5, outtake));

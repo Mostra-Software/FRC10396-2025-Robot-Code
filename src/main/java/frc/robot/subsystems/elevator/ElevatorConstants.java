@@ -13,23 +13,30 @@
 
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.math.util.Units;
+
 public class ElevatorConstants {
 
   public static final int sensorID = 0;
   public static final int masterCanId = 0;
   public static final int slaveCanId = 0;
   public static final double motorReduction = (50. / 46.) * 9.;
-  public static final int currentLimit = 40;
+  public static final int currentLimit = 30;
 
   public static final double homeSequenceSlowPoint = 15;
 
   public static final double forwardSoftLimit = 200;
   public static final double reverseSoftLimit = 0;
+  public static final double PD22t =
+      Units.inchesToMeters(0.25) / Math.sin(Units.degreesToRadians(180. / 22.));
 
   // Position PID Parameters
   public static final double positionP = 0.4;
   public static final double positionI = 0.0;
   public static final double positionD = 0.0;
+  public static final double PIDTolerance = 2.;
   public static final int maxVelocity = 1000;
   public static final int maxAcceleration = 1000;
+  public static final double preHomingPosition = 10.;
+  public static final int homingCurrent = 10;
 }

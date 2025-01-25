@@ -34,19 +34,23 @@ public class Elevator extends SubsystemBase {
     io.setVoltage(percent * 12.0);
   }
 
-  public void runElevatorMaxMotion(int height) {
-    io.elevatorRunMaxMotion((height));
-  }
-
-  public boolean homeSequenceSlowPointReached() {
-    return inputs.homeSequenceSlowPointReached;
-  }
-
-  public boolean homeReached() {
-    return inputs.homeReached;
+  public void setHeight(double height) {
+    io.setHeight((height));
   }
 
   public void resetEncoder() {
     io.resetEncoder();
+  }
+
+  public boolean isAtSetpoint() {
+    return inputs.isAtSetpoint;
+  }
+
+  public boolean isHome() {
+    return inputs.isHome;
+  }
+
+  public double getCurrent() {
+    return inputs.currentAmps;
   }
 }

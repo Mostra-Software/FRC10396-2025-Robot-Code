@@ -22,29 +22,25 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorIOSpark implements ElevatorIO {
-  private final SparkMax masterMotor = new SparkMax(masterCanId, MotorType.kBrushless);
-  private SparkClosedLoopController closedLoopController;
+  private final SparkFlex masterMotor = new SparkFlex(masterCanId, MotorType.kBrushless);
   private final RelativeEncoder masterEncoder = masterMotor.getEncoder();
-
-  private final SparkMax slaveMotor = new SparkMax(slaveCanId, MotorType.kBrushless);
+  private final SparkFlex slaveMotor = new SparkFlex(slaveCanId, MotorType.kBrushless);
   // Because right motor will be slave of left motor, no need for encoder?
   // private final RelativeEncoder right_encoder = elevtator_right.getEncoder();
-
-  public static final DigitalInput elevator_sensor = new DigitalInput(sensorID);
+  private SparkClosedLoopController closedLoopController = masterMotor.getClosedLoopController();
+  private double setpoint = 0.0;
+  private boolean isAtSetpoint = false;
+  private boolean isHome = false;
 
   public ElevatorIOSpark() {
-
-    closedLoopController = masterMotor.getClosedLoopController();
 
     var master_config = new SparkMaxConfig();
     var slave_config = new SparkMaxConfig();
@@ -53,6 +49,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(12.0);
+
     slave_config
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
@@ -60,9 +57,8 @@ public class ElevatorIOSpark implements ElevatorIO {
 
     master_config
         .encoder
-        .positionConversionFactor(2 * (22 * Units.inchesToMeters(0.25) / motorReduction)) // Meters
-        .velocityConversionFactor(
-            2 * (22 * Units.inchesToMeters(0.25) / 60.0 / motorReduction)) // Meters per Seconds
+        .positionConversionFactor(2 * (PD22t / motorReduction)) // Meters
+        .velocityConversionFactor(2 * (PD22t / (motorReduction * 60.))) // Meters per Seconds
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
 
@@ -79,7 +75,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         .maxMotion
         .maxVelocity(maxVelocity)
         .maxAcceleration(maxAcceleration)
-        .allowedClosedLoopError(1);
+        .allowedClosedLoopError(PIDTolerance);
 
     master_config
         .softLimit
@@ -91,9 +87,8 @@ public class ElevatorIOSpark implements ElevatorIO {
     slave_config
         .follow(masterCanId, true)
         .encoder
-        .positionConversionFactor(22 * Units.inchesToMeters(0.25) / motorReduction) // Meters
-        .velocityConversionFactor(
-            22 * Units.inchesToMeters(0.25) / 60.0 / motorReduction) // Meters per Seconds
+        .positionConversionFactor(2 * (PD22t / motorReduction)) // Meters
+        .velocityConversionFactor(2 * (PD22t / (motorReduction * 60.))) // Meters per Seconds
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
 
@@ -132,15 +127,12 @@ public class ElevatorIOSpark implements ElevatorIO {
         () ->
             slaveMotor.configure(
                 slave_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    resetEncoder();
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-
-    inputs.homeReached = elevator_sensor.get();
-
-    inputs.homeSequenceSlowPointReached = (masterEncoder.getPosition() == homeSequenceSlowPoint);
-
     ifOk(masterMotor, masterEncoder::getPosition, (value) -> inputs.positionMeters = value);
     ifOk(masterMotor, masterEncoder::getVelocity, (value) -> inputs.velocityMetersPerSec = value);
     ifOk(
@@ -156,6 +148,14 @@ public class ElevatorIOSpark implements ElevatorIO {
         new DoubleSupplier[] {slaveMotor::getAppliedOutput, slaveMotor::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(slaveMotor, slaveMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
+
+    inputs.isHome = isHome;
+    inputs.setpoint = setpoint;
+
+    ifOk(
+        masterMotor,
+        masterEncoder::getPosition,
+        (value) -> inputs.isAtSetpoint = Math.abs(value - setpoint) < PIDTolerance);
   }
 
   @Override
@@ -164,7 +164,13 @@ public class ElevatorIOSpark implements ElevatorIO {
   }
 
   @Override
-  public void elevatorRunMaxMotion(int height) {
+  public void setHome(boolean isHomed) {
+    isHome = isHomed;
+  }
+
+  @Override
+  public void setHeight(double height) {
+    setpoint = height;
     closedLoopController.setReference(
         height, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
   }
@@ -172,5 +178,9 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void resetEncoder() {
     masterEncoder.setPosition(0);
+  }
+
+  public boolean isAtSetpoint() {
+    return isAtSetpoint;
   }
 }

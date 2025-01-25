@@ -8,16 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.leds.Leds;
 
-public class RunElevatorOpenLoop extends Command {
+public class SetElevatorHeight extends Command {
 
   private Elevator elevator;
-  private Boolean up;
-  private double speed;
+  private double height;
 
-  public RunElevatorOpenLoop(Boolean up, double speed, Elevator elevator) {
+  public SetElevatorHeight(double height, Elevator elevator) {
     this.elevator = elevator;
-    this.up = up;
-    this.speed = speed;
+    this.height = height;
     addRequirements(elevator);
   }
 
@@ -28,11 +26,7 @@ public class RunElevatorOpenLoop extends Command {
 
   @Override
   public void execute() {
-    if (up) {
-      elevator.runPercent(speed);
-    } else {
-      elevator.runPercent(-speed);
-    }
+    elevator.setHeight(height);
   }
 
   @Override
