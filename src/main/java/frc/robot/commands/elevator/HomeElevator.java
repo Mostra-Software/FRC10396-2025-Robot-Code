@@ -4,8 +4,11 @@
 
 package frc.robot.commands.elevator;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
@@ -19,11 +22,15 @@ public class HomeElevator extends SequentialCommandGroup {
     this.elevator = elevator;
 
     addCommands(
-        new RunCommand(() -> elevator.setHeight(ElevatorConstants.preHomingPosition), elevator)
-            .until(() -> elevator.isAtSetpoint()),
-        new RunCommand(() -> elevator.runPercent(-0.2), elevator)
+        //        new RunCommand(() -> elevator.setHeight(ElevatorConstants.preHomingPosition),
+        // elevator)
+        //            .until(() -> elevator.isAtSetpoint()),
+        new ParallelDeadlineGroup(
+            new WaitCommand(0.05), new RunCommand(() -> elevator.runPercent(-0.1), elevator)),
+        new RunCommand(() -> elevator.runPercent(-0.1), elevator)
             .until(() -> elevator.getCurrent() > ElevatorConstants.homingCurrent),
-        new RunCommand(() -> elevator.runPercent(0), elevator),
-        new RunCommand(() -> elevator.resetEncoder(), elevator));
+        new InstantCommand(() -> elevator.runPercent(0), elevator),
+        new InstantCommand(() -> elevator.resetEncoder(), elevator),
+        new InstantCommand(() -> elevator.setHome(true), elevator));
   }
 }

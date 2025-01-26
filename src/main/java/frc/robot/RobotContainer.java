@@ -37,6 +37,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
+import frc.robot.subsystems.leds.*;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeIO;
 import frc.robot.subsystems.outtake.OuttakeIOSim;
@@ -54,6 +55,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Elevator elevator;
   private final Outtake outtake;
+  private final Leds leds = Leds.getInstance();
 
   // Controller
   private final CommandXboxController driverJoy = new CommandXboxController(0);
@@ -65,6 +67,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -158,6 +161,7 @@ public class RobotContainer {
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
+    //
     driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
@@ -172,18 +176,20 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Elevator Openloop Up
-    opeartorJoy.button(0).whileTrue(new SetElevatorPercent(0.5, elevator));
+    // opeartorJoy.button(0).whileTrue(new SetElevatorPercent(0.5, elevator));
+    driverJoy.y().whileTrue(new SetElevatorPercent(0.1, elevator));
+    driverJoy.x().whileTrue(new SetElevatorPercent(-0.1, elevator));
 
     // Elevator Openloop Down
-    opeartorJoy.button(1).whileTrue(new SetElevatorPercent(-0.5, elevator));
+    // opeartorJoy.button(1).whileTrue(new SetElevatorPercent(-0.5, elevator));
 
     // Elevator ClosedLoop Controls
 
     // Home
-    opeartorJoy.button(3).whileTrue(new HomeElevator(elevator));
+    driverJoy.leftBumper().whileTrue(new HomeElevator(elevator));
 
     // L1
-    opeartorJoy.button(4).whileTrue(new SetElevatorHeight(0.4, elevator));
+    driverJoy.rightBumper().whileTrue(new SetElevatorHeight(0.1, elevator));
 
     // Outtake ClosedLoop Shoot
     // opeartorJoy.button(2).whileTrue(new Shoot(outtake));

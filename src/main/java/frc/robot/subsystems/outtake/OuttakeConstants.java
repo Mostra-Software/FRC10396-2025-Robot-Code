@@ -17,7 +17,7 @@ public class OuttakeConstants {
 
   public static final int frontSensorID = 0;
   public static final int rearSensorID = 0;
-  public static final int outtakeCanId = 0;
+  public static final int outtakeCanId = 60;
   public static final int currentLimit = 40;
 
   public static final double motorReduction = 1;
