@@ -34,9 +34,9 @@ public class ElevatorConstants {
   public static final double positionP = 0.01;
   public static final double positionI = 0.0;
   public static final double positionD = 0.0;
-  public static final double PIDTolerance = 0.001;
-  public static final int maxVelocity = 5000;
-  public static final int maxAcceleration = 5000;
+  public static final double PIDTolerance = 0.015;
+  public static final int maxVelocity = 3000;
+  public static final int maxAcceleration = 50000;
   public static final double preHomingPosition = 0.15;
   public static final int homingCurrent = 30;
 

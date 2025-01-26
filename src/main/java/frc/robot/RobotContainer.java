@@ -189,7 +189,7 @@ public class RobotContainer {
     driverJoy.leftBumper().whileTrue(new HomeElevator(elevator));
 
     // L1
-    driverJoy.rightBumper().whileTrue(new SetElevatorHeight(0.1, elevator));
+    driverJoy.rightBumper().whileTrue(new SetElevatorHeight(0.3, elevator));
 
     // Outtake ClosedLoop Shoot
     // opeartorJoy.button(2).whileTrue(new Shoot(outtake));
