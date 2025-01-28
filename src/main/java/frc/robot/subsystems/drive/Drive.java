@@ -277,6 +277,10 @@ public class Drive extends SubsystemBase {
     else return new Pose2d();
   }
 
+  public Rotation2d getClosestReefFaceAngle() {
+    return nearestReefFace.getRotation();
+  }
+
   /** Returns the module positions (turn angles and drive positions) for all of the modules. */
   private SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] states = new SwerveModulePosition[4];
