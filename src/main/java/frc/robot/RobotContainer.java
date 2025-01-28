@@ -41,6 +41,7 @@ import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeIO;
 import frc.robot.subsystems.outtake.OuttakeIOSim;
 import frc.robot.subsystems.outtake.OuttakeIOSpark;
+import frc.robot.util.TargetingSystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -54,6 +55,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Elevator elevator;
   private final Outtake outtake;
+  private final TargetingSystem targetingSystem;
 
   // Controller
   private final CommandXboxController driverJoy = new CommandXboxController(0);
@@ -68,19 +70,22 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
+        targetingSystem = new TargetingSystem();
         drive =
             new Drive(
                 new GyroIOPigeon2(),
                 new ModuleIOSpark(0),
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
-                new ModuleIOSpark(3));
+                new ModuleIOSpark(3),
+                targetingSystem);
 
         elevator = new Elevator(new ElevatorIOSpark());
         outtake = new Outtake(new OuttakeIOSpark());
         break;
 
       case SIM:
+        targetingSystem = new TargetingSystem();
         // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
@@ -88,13 +93,15 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                new ModuleIOSim());
+                new ModuleIOSim(),
+                targetingSystem);
 
         elevator = new Elevator(new ElevatorIOSim());
         outtake = new Outtake(new OuttakeIOSim());
         break;
 
       default:
+        targetingSystem = new TargetingSystem();
         // Replayed robot, disable IO implementations
         drive =
             new Drive(
@@ -102,7 +109,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                targetingSystem);
 
         elevator = new Elevator(new ElevatorIO() {});
         outtake = new Outtake(new OuttakeIO() {});

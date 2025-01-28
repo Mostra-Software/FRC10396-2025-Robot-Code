@@ -45,7 +45,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants.Reef;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.TargetingSystem;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -73,13 +75,18 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  private Pose2d nearestReefFace = new Pose2d();
+  private TargetingSystem targetingSystem;
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
-      ModuleIO brModuleIO) {
+      ModuleIO brModuleIO,
+      TargetingSystem targetingSystem) {
     this.gyroIO = gyroIO;
+    this.targetingSystem = targetingSystem;
     modules[0] = new Module(flModuleIO, 0);
     modules[1] = new Module(frModuleIO, 1);
     modules[2] = new Module(blModuleIO, 2);
@@ -188,6 +195,8 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    nearestReefFace = getClosestReefFace();
   }
 
   /**
@@ -259,6 +268,13 @@ public class Drive extends SubsystemBase {
       states[i] = modules[i].getState();
     }
     return states;
+  }
+
+  @AutoLogOutput(key = "TargetingSystem/Reef")
+  private Pose2d getClosestReefFace() {
+    int faceIndex = targetingSystem.getNearestReefFace(getPose());
+    if (faceIndex != -1) return Reef.centerFaces[faceIndex];
+    else return new Pose2d();
   }
 
   /** Returns the module positions (turn angles and drive positions) for all of the modules. */
