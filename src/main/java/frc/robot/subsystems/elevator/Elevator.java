@@ -53,4 +53,8 @@ public class Elevator extends SubsystemBase {
   public double getCurrent() {
     return inputs.currentAmps;
   }
+
+  public void setHome(boolean isHome) {
+    io.setHome(isHome);
+  }
 }

@@ -59,8 +59,8 @@ public class ElevatorIOSpark implements ElevatorIO {
 
     master_config
         .encoder
-        .positionConversionFactor(2 * (PD22t / motorReduction)) // Meters
-        .velocityConversionFactor(2 * (PD22t / (motorReduction * 60.))) // Meters per Seconds
+        .positionConversionFactor(3 * (PD22t / motorReduction)) // Meters
+        .velocityConversionFactor(3 * (PD22t / (motorReduction * 60.))) // Meters per Seconds
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
 
@@ -83,14 +83,14 @@ public class ElevatorIOSpark implements ElevatorIO {
         .softLimit
         .forwardSoftLimit(forwardSoftLimit)
         .reverseSoftLimit(reverseSoftLimit)
-        .forwardSoftLimitEnabled(true)
-        .reverseSoftLimitEnabled(true);
+        .forwardSoftLimitEnabled(false)
+        .reverseSoftLimitEnabled(false);
 
     slave_config
         .follow(masterCanId, true)
         .encoder
-        .positionConversionFactor(2 * (PD22t / motorReduction)) // Meters
-        .velocityConversionFactor(2 * (PD22t / (motorReduction * 60.))) // Meters per Seconds
+        .positionConversionFactor(3 * (PD22t / motorReduction)) // Meters
+        .velocityConversionFactor(3 * (PD22t / (motorReduction * 60.))) // Meters per Seconds
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
 
@@ -113,8 +113,8 @@ public class ElevatorIOSpark implements ElevatorIO {
         .softLimit
         .forwardSoftLimit(forwardSoftLimit)
         .reverseSoftLimit(reverseSoftLimit)
-        .forwardSoftLimitEnabled(true)
-        .reverseSoftLimitEnabled(true);
+        .forwardSoftLimitEnabled(false)
+        .reverseSoftLimitEnabled(false);
 
     tryUntilOk(
         masterMotor,

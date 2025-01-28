@@ -6,6 +6,7 @@ package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.leds.Leds;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SetElevatorPercent extends Command {
@@ -20,7 +21,9 @@ public class SetElevatorPercent extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    Leds.getInstance().elevator_moving = true;
+  }
 
   @Override
   public void execute() {
@@ -30,6 +33,7 @@ public class SetElevatorPercent extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Leds.getInstance().elevator_moving = false;
     elevator.runPercent(0);
   }
 

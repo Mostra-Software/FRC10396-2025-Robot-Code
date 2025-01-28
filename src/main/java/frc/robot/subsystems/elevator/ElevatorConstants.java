@@ -18,10 +18,10 @@ import edu.wpi.first.math.util.Units;
 public class ElevatorConstants {
 
   public static final int sensorID = 0;
-  public static final int masterCanId = 0;
-  public static final int slaveCanId = 0;
+  public static final int masterCanId = 41;
+  public static final int slaveCanId = 42;
   public static final double motorReduction = (50. / 46.) * 9.;
-  public static final int currentLimit = 30;
+  public static final int currentLimit = 40;
 
   public static final double homeSequenceSlowPoint = 15;
 
@@ -31,14 +31,14 @@ public class ElevatorConstants {
       Units.inchesToMeters(0.25) / Math.sin(Units.degreesToRadians(180. / 22.));
 
   // Position PID Parameters
-  public static final double positionP = 0.4;
+  public static final double positionP = 0.01;
   public static final double positionI = 0.0;
   public static final double positionD = 0.0;
-  public static final double PIDTolerance = 2.;
-  public static final int maxVelocity = 1000;
-  public static final int maxAcceleration = 1000;
+  public static final double PIDTolerance = 0.015;
+  public static final int maxVelocity = 3000;
+  public static final int maxAcceleration = 50000;
   public static final double preHomingPosition = 0.15;
-  public static final int homingCurrent = 10;
+  public static final int homingCurrent = 30;
 
   public static final double kCarriageMass = 10;
   public static final double kMinElevatorHeightMeters = 0;
