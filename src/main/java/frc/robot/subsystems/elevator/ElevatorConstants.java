@@ -31,12 +31,12 @@ public class ElevatorConstants {
       Units.inchesToMeters(0.25) / Math.sin(Units.degreesToRadians(180. / 22.));
 
   // Position PID Parameters
-  public static final double positionP = 0.01;
+  public static final double positionP = 6;
   public static final double positionI = 0.0;
   public static final double positionD = 0.0;
   public static final double PIDTolerance = 0.015;
-  public static final int maxVelocity = 3000;
-  public static final int maxAcceleration = 50000;
+  public static final int maxVelocity = 5000;
+  public static final int maxAcceleration = 12000;
   public static final double preHomingPosition = 0.15;
   public static final int homingCurrent = 30;
 

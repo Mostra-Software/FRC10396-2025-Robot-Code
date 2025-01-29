@@ -172,8 +172,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void setHeight(double height) {
     setpoint = height;
-    closedLoopController.setReference(
-        height, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+    closedLoopController.setReference(height, ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
   @Override
