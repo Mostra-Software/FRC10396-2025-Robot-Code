@@ -23,8 +23,7 @@ public interface OuttakeIO {
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
 
-    public boolean coralVisibleFront = false;
-    public boolean coralVisibleRear = false;
+    public boolean hasGP = false;
   }
 
   /** Update the set of loggable inputs. */

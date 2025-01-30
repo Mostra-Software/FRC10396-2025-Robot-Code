@@ -8,13 +8,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.outtake.Outtake;
 
-public class RunIntakeOpenLoop extends Command {
+public class RunOuttake extends Command {
 
   private Outtake outtake;
   private double speed;
   private boolean out;
 
-  public RunIntakeOpenLoop(Boolean out, double speed, Outtake outtake) {
+  public RunOuttake(Boolean out, double speed, Outtake outtake) {
     this.out = out;
     this.speed = speed;
     this.outtake = outtake;

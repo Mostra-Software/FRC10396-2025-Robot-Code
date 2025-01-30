@@ -34,15 +34,12 @@ public class Outtake extends SubsystemBase {
     io.setVoltage(percent * 12.0);
   }
 
-  public void outtakeRunClosedLoopVelocity(int rpm) {
-    io.outtakeRunClosedLoopVelocity((rpm));
+
+  public boolean hasGP() {
+    return inputs.hasGP;
   }
 
-  public boolean coralVisibleRear() {
-    return inputs.coralVisibleRear;
-  }
-
-  public boolean coralVisibleFront() {
+  /*public boolean coralVisibleFront() {
     return inputs.coralVisibleFront;
-  }
+}*/
 }

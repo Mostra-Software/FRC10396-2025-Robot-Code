@@ -22,11 +22,12 @@ public class Intake extends SequentialCommandGroup {
 
     addCommands(
         new InstantCommand(() -> Leds.getInstance().intaking = true),
-        new RunCommand(() -> outtake.outtakeRunClosedLoopVelocity(100), outtake)
-            .until(outtake::coralVisibleRear),
-        new RunCommand(() -> outtake.outtakeRunClosedLoopVelocity(50), outtake)
-            .until(outtake::coralVisibleFront),
-        new RunCommand(() -> outtake.runPercent(0), outtake),
+        new RunCommand(() -> outtake.runPercent(0.5), outtake)
+            .until(outtake::hasGP),
+            new RunCommand(() -> outtake.runPercent(0.3), outtake)
+            .until(outtake::hasGP),
+            new RunCommand(() -> outtake.runPercent(-0.2), outtake).withTimeout(0.2),
+        new InstantCommand(() -> outtake.runPercent(0), outtake),
         new InstantCommand(() -> Leds.getInstance().intaking = false));
   }
 }

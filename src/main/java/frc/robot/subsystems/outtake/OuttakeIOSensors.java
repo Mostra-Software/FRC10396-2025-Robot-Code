@@ -20,18 +20,18 @@ import au.grapplerobotics.LaserCan;
 
 public class OuttakeIOSensors implements OuttakeIO {
 
-  private final LaserCan frontSensor = new LaserCan(frontSensorID);
+  //private final LaserCan frontSensor = new LaserCan(frontSensorID);
   private final LaserCan rearSensor = new LaserCan(rearSensorID);
 
   public OuttakeIOSensors() {
 
-    try {
+   /*  try {
       frontSensor.setRangingMode(LaserCan.RangingMode.SHORT);
       frontSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
       frontSensor.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
-    }
+    }*/
 
     try {
       rearSensor.setRangingMode(LaserCan.RangingMode.SHORT);
@@ -46,10 +46,10 @@ public class OuttakeIOSensors implements OuttakeIO {
   public void updateInputs(OuttakeIOInputs inputs) {
     // May need to use LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT if having problems!
     // see: https://docs.thethriftybot.com/lasercan/code-examples/lasercan-frc-example-java
-    inputs.coralVisibleRear =
+    inputs.hasGP =
         (rearSensor.getMeasurement().distance_mm == rearSensorTriggerDistance);
 
-    inputs.coralVisibleFront =
-        (frontSensor.getMeasurement().distance_mm == frontSensorTriggerDistance);
+    //inputs.coralVisibleFront =
+  //      (frontSensor.getMeasurement().distance_mm == frontSensorTriggerDistance);
   }
 }

@@ -20,13 +20,15 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.HomeElevator;
 import frc.robot.commands.elevator.SetElevatorHeight;
 import frc.robot.commands.elevator.SetElevatorPercent;
+import frc.robot.commands.outtake.Intake;
+import frc.robot.commands.outtake.Shoot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -62,7 +64,7 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController driverJoy = new CommandXboxController(0);
 
-  private final CommandJoystick opeartorJoy = new CommandJoystick(1);
+  private final CommandPS5Controller opeartorJoy = new CommandPS5Controller(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -181,26 +183,33 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Elevator Openloop Up
-    // opeartorJoy.button(0).whileTrue(new SetElevatorPercent(0.5, elevator));
-    driverJoy.y().whileTrue(new SetElevatorPercent(0.1, elevator));
-    driverJoy.x().whileTrue(new SetElevatorPercent(-0.1, elevator));
+    opeartorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
 
     // Elevator Openloop Down
-    // opeartorJoy.button(1).whileTrue(new SetElevatorPercent(-0.5, elevator));
+    opeartorJoy.povDown().whileTrue(new SetElevatorPercent(-0.5, elevator));
 
     // Elevator ClosedLoop Controls
 
     // Home
-    driverJoy.leftBumper().whileTrue(new HomeElevator(elevator));
+    opeartorJoy.L1().whileTrue(new HomeElevator(elevator));
 
     // L1
-    driverJoy.rightBumper().whileTrue(new SetElevatorHeight(0.3, elevator));
+    opeartorJoy.cross().whileTrue(new SetElevatorHeight(0.3, elevator));
+
+    // L2
+    opeartorJoy.circle().whileTrue(new SetElevatorHeight(0.4, elevator));
+
+    // L3
+    opeartorJoy.square().whileTrue(new SetElevatorHeight(0.45, elevator));
+
+    // L4
+    opeartorJoy.triangle().whileTrue(new SetElevatorHeight(0.5, elevator));
 
     // Outtake ClosedLoop Shoot
-    // opeartorJoy.button(2).whileTrue(new Shoot(outtake));
+    opeartorJoy.R2().whileTrue(new Shoot(outtake));
 
     // Outtake ClosedLoop Intake
-    // opeartorJoy.button(3).whileTrue(new Intake(outtake));
+    opeartorJoy.L2().whileTrue(new Intake(outtake));
   }
 
   /**
