@@ -58,5 +58,4 @@ public class OuttakeIOSpark implements OuttakeIO {
   public void setVoltage(double volts) {
     outtakeMotor.setVoltage(volts);
   }
-
 }

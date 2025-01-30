@@ -34,12 +34,11 @@ public class Outtake extends SubsystemBase {
     io.setVoltage(percent * 12.0);
   }
 
-
   public boolean hasGP() {
     return inputs.hasGP;
   }
 
   /*public boolean coralVisibleFront() {
-    return inputs.coralVisibleFront;
-}*/
+      return inputs.coralVisibleFront;
+  }*/
 }

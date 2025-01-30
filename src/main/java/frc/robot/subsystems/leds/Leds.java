@@ -99,7 +99,6 @@ public class Leds extends VirtualSubsystem {
       if (loadingNotifier != null) {
         loadingNotifier.stop();
       }
-  
     }
 
     // Update auto state
