@@ -16,8 +16,8 @@ package frc.robot.subsystems.outtake;
 public class OuttakeConstants {
 
   public static final int SensorID = 61;
-  public static final int outtakeCanId = 60;
+  public static final int outtakeCanId = 59;
   public static final int currentLimit = 40;
 
-  public static final int SensorTriggerDistance = 12;
+  public static final double SensorTriggerDistance = 50;
 }

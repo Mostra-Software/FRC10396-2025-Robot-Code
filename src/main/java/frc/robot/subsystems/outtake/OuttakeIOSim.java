@@ -33,8 +33,6 @@ public class OuttakeIOSim implements OuttakeIO {
     sim.setInputVoltage(appliedVolts);
     sim.update(0.02);
 
-    inputs.position = sim.getAngularPositionRad();
-    inputs.velocityRPM = sim.getAngularVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = sim.getCurrentDrawAmps();
   }

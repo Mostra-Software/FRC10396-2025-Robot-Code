@@ -16,6 +16,7 @@ package frc.robot.subsystems.outtake;
 import static frc.robot.subsystems.outtake.OuttakeConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
+import au.grapplerobotics.LaserCan;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -26,13 +27,14 @@ import java.util.function.DoubleSupplier;
 
 public class OuttakeIOSpark implements OuttakeIO {
   private final SparkFlex outtakeMotor = new SparkFlex(outtakeCanId, MotorType.kBrushless);
+  private final LaserCan rearSensor = new LaserCan(SensorID);
 
   public OuttakeIOSpark() {
 
     var master_config = new SparkFlexConfig();
 
     master_config
-        .idleMode(IdleMode.kBrake)
+        .idleMode(IdleMode.kCoast)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(12.0);
 
@@ -52,6 +54,7 @@ public class OuttakeIOSpark implements OuttakeIO {
         new DoubleSupplier[] {outtakeMotor::getAppliedOutput, outtakeMotor::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(outtakeMotor, outtakeMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    inputs.hasGP = (rearSensor.getMeasurement().distance_mm <= SensorTriggerDistance);
   }
 
   @Override

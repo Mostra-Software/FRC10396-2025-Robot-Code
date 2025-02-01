@@ -53,7 +53,7 @@ public class DriveConstants {
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 40;
-  public static final double wheelRadiusMeters = Units.inchesToMeters(4.121);
+  public static final double wheelRadiusMeters = Units.inchesToMeters(1.888);
   public static final double driveMotorReduction =
       (50. / 16.) * (17. / 27.) * (45. / 15.); // SDS MK4C
   public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);

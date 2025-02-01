@@ -25,27 +25,27 @@ public class ElevatorConstants {
 
   public static final double homeSequenceSlowPoint = 15;
 
-  public static final double forwardSoftLimit = 200;
+  public static final double forwardSoftLimit = 0.600;
   public static final double reverseSoftLimit = 0;
   public static final double PD22t =
       Units.inchesToMeters(0.25) / Math.sin(Units.degreesToRadians(180. / 22.));
 
   // Position PID Parameters
-  public static final double positionP = 6;
+  public static final double positionP = 15;
   public static final double positionI = 0.0;
   public static final double positionD = 0.0;
   public static final double PIDTolerance = 0.015;
   public static final int maxVelocity = 5000;
   public static final int maxAcceleration = 12000;
-  public static final double preHomingPosition = 0.15;
+  public static final double preHomingPosition = 0.015;
   public static final int homingCurrent = 30;
 
   public static final double kCarriageMass = 10;
   public static final double kMinElevatorHeightMeters = 0;
   public static final double kMaxElevatorHeightMeters = 2;
 
-  public static final double L1Height = 0.3;
-  public static final double L2Height = 0.3;
-  public static final double L3Height = 0.3;
-  public static final double L4Height = 0.3;
+  public static final double L1Height = 0.0;
+  public static final double L2Height = 0.144;
+  public static final double L3Height = 0.323;
+  public static final double L4Height = 0.5;
 }

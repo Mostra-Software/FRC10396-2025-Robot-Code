@@ -21,17 +21,17 @@ public class AutoReefHeight extends Command {
   @Override
   public void initialize() {
     int targetLevel = elevator.getTargetReef();
-    switch (targetLevel) {
-      case 0:
-        targetHeight = ElevatorConstants.L1Height;
-      case 1:
-        targetHeight = ElevatorConstants.L2Height;
-      case 2:
-        targetHeight = ElevatorConstants.L3Height;
-      case 3:
-        targetHeight = ElevatorConstants.L4Height;
-      default:
-        targetHeight = ElevatorConstants.L1Height;
+    System.out.println(targetLevel);
+    if (targetLevel == 0) {
+      targetHeight = ElevatorConstants.L1Height;
+    } else if (targetLevel == 1) {
+      targetHeight = ElevatorConstants.L2Height;
+    } else if (targetLevel == 2) {
+      targetHeight = ElevatorConstants.L3Height;
+    } else if (targetLevel == 3) {
+      targetHeight = ElevatorConstants.L4Height;
+    } else {
+      targetHeight = ElevatorConstants.L1Height;
     }
   }
 

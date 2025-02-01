@@ -22,9 +22,9 @@ public class HomeElevator extends SequentialCommandGroup {
     this.elevator = elevator;
 
     addCommands(
-        //        new RunCommand(() -> elevator.setHeight(ElevatorConstants.preHomingPosition),
-        // elevator)
-        //            .until(() -> elevator.isAtSetpoint()),
+        new InstantCommand(() -> elevator.setHome(false), elevator),
+        new RunCommand(() -> elevator.setHeight(ElevatorConstants.preHomingPosition), elevator)
+            .until(() -> elevator.isAtSetpoint()),
         new ParallelDeadlineGroup(
             new WaitCommand(0.05), new RunCommand(() -> elevator.runPercent(-0.1), elevator)),
         new RunCommand(() -> elevator.runPercent(-0.1), elevator)

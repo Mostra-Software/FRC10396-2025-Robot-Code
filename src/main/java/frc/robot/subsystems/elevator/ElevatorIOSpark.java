@@ -34,8 +34,6 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final SparkFlex masterMotor = new SparkFlex(masterCanId, MotorType.kBrushless);
   private final RelativeEncoder masterEncoder = masterMotor.getEncoder();
   private final SparkFlex slaveMotor = new SparkFlex(slaveCanId, MotorType.kBrushless);
-  // Because right motor will be slave of left motor, no need for encoder?
-  // private final RelativeEncoder right_encoder = elevtator_right.getEncoder();
   private SparkClosedLoopController closedLoopController = masterMotor.getClosedLoopController();
   private double setpoint = 0.0;
   private boolean isAtSetpoint = false;
@@ -72,17 +70,10 @@ public class ElevatorIOSpark implements ElevatorIO {
         .outputRange(-1, 1);
 
     master_config
-        .closedLoop
-        .maxMotion
-        .maxVelocity(maxVelocity)
-        .maxAcceleration(maxAcceleration)
-        .allowedClosedLoopError(PIDTolerance);
-
-    master_config
         .softLimit
         .forwardSoftLimit(forwardSoftLimit)
         .reverseSoftLimit(reverseSoftLimit)
-        .forwardSoftLimitEnabled(false)
+        .forwardSoftLimitEnabled(true)
         .reverseSoftLimitEnabled(false);
 
     slave_config
@@ -100,13 +91,6 @@ public class ElevatorIOSpark implements ElevatorIO {
         .i(positionI)
         .d(positionD)
         .outputRange(-1, 1);
-
-    slave_config
-        .closedLoop
-        .maxMotion
-        .maxVelocity(maxVelocity)
-        .maxAcceleration(maxAcceleration)
-        .allowedClosedLoopError(1);
 
     slave_config
         .softLimit

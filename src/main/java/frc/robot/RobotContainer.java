@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -64,9 +65,9 @@ public class RobotContainer {
   private final Leds leds = Leds.getInstance();
 
   // Controller
-  private final CommandXboxController driverJoy = new CommandXboxController(0);
+  private final CommandXboxController driverJoy = new CommandXboxController(1);
 
-  private final CommandPS5Controller operatorJoy = new CommandPS5Controller(1);
+  private final CommandPS5Controller operatorJoy = new CommandPS5Controller(2);
   private Trigger autoScoreGetReady = driverJoy.leftTrigger(0.5);
 
   // Dashboard inputs
@@ -222,9 +223,11 @@ public class RobotContainer {
 
     // Outtake ClosedLoop Shoot
     operatorJoy.R2().whileTrue(new Shoot(outtake));
+    operatorJoy.R2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
 
     // Outtake ClosedLoop Intake
     operatorJoy.L2().whileTrue(new Intake(outtake));
+    operatorJoy.L2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
   }
 
   /**
