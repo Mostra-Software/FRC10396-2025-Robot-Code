@@ -13,6 +13,7 @@
 
 package frc.robot.subsystems.elevator;
 
+import frc.robot.util.TargetingSystem.ReefBranchLevel;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
@@ -25,6 +26,7 @@ public interface ElevatorIO {
     public double setpoint = 0.0;
     public boolean isAtSetpoint = false;
     public boolean isHome = false;
+    public int targetBranchLevel = ReefBranchLevel.L1.ordinal();
   }
 
   /** Update the set of loggable inputs. */

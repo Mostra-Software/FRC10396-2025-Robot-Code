@@ -12,6 +12,8 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.Measure;
 import frc.robot.FieldConstants.*;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,6 +48,15 @@ public class TargetingSystem {
     this.targetBranchLevel = targetBranchLevel;
   }
 
+  public void setTarget(ReefBranchLevel targetBranchLevel) {
+    this.targetBranchLevel = targetBranchLevel;
+  }
+
+  public ReefBranchLevel getTargetBranchLevel() {
+    if (targetBranchLevel != null) return targetBranchLevel;
+    else return ReefBranchLevel.L1;
+  }
+
   public void left() {
     if (targetBranch == ReefBranch.H) {
       targetBranch = ReefBranch.I;
@@ -64,10 +75,36 @@ public class TargetingSystem {
     return AllianceFlipUtil.apply(scoringPose);
   }
 
+  public Pose2d getHPZone(Pose2d robotPose) {
+    Pose2d nearestHP =
+        robotPose.nearest(
+            Arrays.asList(
+                AllianceFlipUtil.apply(CoralStation.leftCenterFace),
+                AllianceFlipUtil.apply(CoralStation.rightCenterFace)));
+    Transform2d delta = robotPose.minus(nearestHP);
+    Measure distanceX = delta.getMeasureX();
+    Measure distanceY = delta.getMeasureY();
+    if (distanceX.abs(Meters) < 2 && distanceY.abs(Meters) < 2)
+      return nearestHP.plus(new Transform2d(Translation2d.kZero, Rotation2d.fromDegrees(180)));
+    else return null;
+  }
+
+  public List<Pose2d> getFlippedReefFaces() {
+    if (AllianceFlipUtil.shouldFlip()) {
+      return Arrays.asList(
+          AllianceFlipUtil.apply(Reef.centerFaces[0]),
+          AllianceFlipUtil.apply(Reef.centerFaces[1]),
+          AllianceFlipUtil.apply(Reef.centerFaces[2]),
+          AllianceFlipUtil.apply(Reef.centerFaces[3]),
+          AllianceFlipUtil.apply(Reef.centerFaces[4]),
+          AllianceFlipUtil.apply(Reef.centerFaces[5]));
+    } else return Arrays.asList(Reef.centerFaces);
+  }
+
   public int getNearestReefFace(Pose2d robotPose) {
     int face = 0;
     try {
-      List<Pose2d> reefFaces = Arrays.asList(Reef.centerFaces);
+      List<Pose2d> reefFaces = getFlippedReefFaces();
       Pose2d targetFace = robotPose.nearest(reefFaces);
       face = reefFaces.indexOf(targetFace);
     } catch (Exception e) {
@@ -93,6 +130,7 @@ public class TargetingSystem {
   public final HashMap<Double[], Integer> slopeToReefFace = new HashMap<Double[], Integer>();
 
   public enum ReefBranchLevel {
+    L1,
     L2,
     L3,
     L4

@@ -38,6 +38,5 @@ public class OuttakeIOSensors implements OuttakeIO {
     // May need to use LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT if having problems!
     // see: https://docs.thethriftybot.com/lasercan/code-examples/lasercan-frc-example-java
     inputs.hasGP = (rearSensor.getMeasurement().distance_mm == SensorTriggerDistance);
-
   }
 }

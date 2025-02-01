@@ -43,4 +43,9 @@ public class ElevatorConstants {
   public static final double kCarriageMass = 10;
   public static final double kMinElevatorHeightMeters = 0;
   public static final double kMaxElevatorHeightMeters = 2;
+
+  public static final double L1Height = 0.3;
+  public static final double L2Height = 0.3;
+  public static final double L3Height = 0.3;
+  public static final double L4Height = 0.3;
 }

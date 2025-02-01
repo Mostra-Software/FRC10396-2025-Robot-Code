@@ -14,24 +14,32 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.TargetingSystem;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private TargetingSystem targetingSystem;
 
-  public Elevator(ElevatorIO io) {
+  public Elevator(ElevatorIO io, TargetingSystem targetingSystem) {
     this.io = io;
+    this.targetingSystem = targetingSystem;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    inputs.targetBranchLevel = targetingSystem.getTargetBranchLevel().ordinal();
     Logger.processInputs("Elevator", inputs);
   }
 
   public void runPercent(double percent) {
     io.setVoltage(percent * 12.0);
+  }
+
+  public int getTargetReef() {
+    return inputs.targetBranchLevel;
   }
 
   public void setHeight(double height) {

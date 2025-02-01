@@ -22,10 +22,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.elevator.AutoScore;
 import frc.robot.commands.elevator.HomeElevator;
-import frc.robot.commands.elevator.SetElevatorHeight;
 import frc.robot.commands.elevator.SetElevatorPercent;
 import frc.robot.commands.outtake.Intake;
 import frc.robot.commands.outtake.Shoot;
@@ -45,6 +46,7 @@ import frc.robot.subsystems.outtake.OuttakeIO;
 import frc.robot.subsystems.outtake.OuttakeIOSim;
 import frc.robot.subsystems.outtake.OuttakeIOSpark;
 import frc.robot.util.TargetingSystem;
+import frc.robot.util.TargetingSystem.ReefBranchLevel;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -64,7 +66,8 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController driverJoy = new CommandXboxController(0);
 
-  private final CommandPS5Controller opeartorJoy = new CommandPS5Controller(1);
+  private final CommandPS5Controller operatorJoy = new CommandPS5Controller(1);
+  private Trigger autoScoreGetReady = driverJoy.leftTrigger(0.5);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -85,7 +88,7 @@ public class RobotContainer {
                 new ModuleIOSpark(3),
                 targetingSystem);
 
-        elevator = new Elevator(new ElevatorIOSpark());
+        elevator = new Elevator(new ElevatorIOSpark(), targetingSystem);
         outtake = new Outtake(new OuttakeIOSpark());
         break;
 
@@ -101,7 +104,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 targetingSystem);
 
-        elevator = new Elevator(new ElevatorIOSim());
+        elevator = new Elevator(new ElevatorIOSim(), targetingSystem);
         outtake = new Outtake(new OuttakeIOSim());
         break;
 
@@ -117,7 +120,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 targetingSystem);
 
-        elevator = new Elevator(new ElevatorIO() {});
+        elevator = new Elevator(new ElevatorIO() {}, targetingSystem);
         outtake = new Outtake(new OuttakeIO() {});
         break;
     }
@@ -164,12 +167,14 @@ public class RobotContainer {
     driverJoy
         .a()
         .whileTrue(
-            DriveCommands.joystickDriveSnapToReef(
+            DriveCommands.joystickDriveAutoSnap(
                 drive, () -> -driverJoy.getLeftY(), () -> -driverJoy.getLeftX()));
 
     // Switch to X pattern when X button is pressed
     //
     driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    autoScoreGetReady.onTrue(new AutoScore(elevator, driverJoy.rightTrigger(.5)));
 
     // Reset gyro to 0° when B button is pressed
     driverJoy
@@ -182,34 +187,44 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    driverJoy.y().onTrue(Commands.runOnce(() -> drive.setPoseFacingReef()).ignoringDisable(true));
+
     // Elevator Openloop Up
-    opeartorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
+    operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
 
     // Elevator Openloop Down
-    opeartorJoy.povDown().whileTrue(new SetElevatorPercent(-0.5, elevator));
+    operatorJoy.povDown().whileTrue(new SetElevatorPercent(-0.5, elevator));
 
     // Elevator ClosedLoop Controls
 
     // Home
-    opeartorJoy.L1().whileTrue(new HomeElevator(elevator));
+    operatorJoy.L1().whileTrue(new HomeElevator(elevator));
 
     // L1
-    opeartorJoy.cross().whileTrue(new SetElevatorHeight(0.3, elevator));
+    operatorJoy
+        .cross()
+        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L1)));
 
     // L2
-    opeartorJoy.circle().whileTrue(new SetElevatorHeight(0.4, elevator));
+    operatorJoy
+        .square()
+        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2)));
 
     // L3
-    opeartorJoy.square().whileTrue(new SetElevatorHeight(0.45, elevator));
+    operatorJoy
+        .circle()
+        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3)));
 
     // L4
-    opeartorJoy.triangle().whileTrue(new SetElevatorHeight(0.5, elevator));
+    operatorJoy
+        .triangle()
+        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4)));
 
     // Outtake ClosedLoop Shoot
-    opeartorJoy.R2().whileTrue(new Shoot(outtake));
+    operatorJoy.R2().whileTrue(new Shoot(outtake));
 
     // Outtake ClosedLoop Intake
-    opeartorJoy.L2().whileTrue(new Intake(outtake));
+    operatorJoy.L2().whileTrue(new Intake(outtake));
   }
 
   /**

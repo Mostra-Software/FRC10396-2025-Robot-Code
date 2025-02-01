@@ -157,7 +157,7 @@ public class DriveCommands {
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
 
-  public static Command joystickDriveSnapToReef(
+  public static Command joystickDriveAutoSnap(
       Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
 
     // Create PID controller
@@ -179,8 +179,7 @@ public class DriveCommands {
               // Calculate angular speed
               double omega =
                   angleController.calculate(
-                      drive.getRotation().getRadians(),
-                      drive.getClosestReefFaceAngle().getRadians());
+                      drive.getRotation().getRadians(), drive.getAutoSnapAngle().getRadians());
 
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =

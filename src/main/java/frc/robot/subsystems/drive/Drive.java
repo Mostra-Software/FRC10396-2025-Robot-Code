@@ -29,6 +29,8 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -46,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.FieldConstants.Reef;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.TargetingSystem;
 import java.util.concurrent.locks.Lock;
@@ -75,7 +78,7 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
-  private Pose2d nearestReefFace = new Pose2d();
+  private Pose2d autoSnapPose = new Pose2d();
   private TargetingSystem targetingSystem;
 
   public Drive(
@@ -196,7 +199,7 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
-    nearestReefFace = getClosestReefFace();
+    autoSnapPose = getAutoSnapPose();
   }
 
   /**
@@ -270,15 +273,36 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
-  @AutoLogOutput(key = "TargetingSystem/Reef")
-  private Pose2d getClosestReefFace() {
-    int faceIndex = targetingSystem.getNearestReefFace(getPose());
-    if (faceIndex != -1) return Reef.centerFaces[faceIndex];
-    else return new Pose2d();
+  private Pose2d getClosestReefFace(Pose2d currPose) {
+    int faceIndex = targetingSystem.getNearestReefFace(currPose);
+    if (faceIndex != -1) {
+      return AllianceFlipUtil.apply(
+          Reef.centerFaces[faceIndex].plus(
+              new Transform2d(Translation2d.kZero, Rotation2d.fromDegrees(0))));
+    } else return new Pose2d();
   }
 
-  public Rotation2d getClosestReefFaceAngle() {
-    return nearestReefFace.getRotation();
+  @AutoLogOutput(key = "TargetingSystem/AutoSnapPose")
+  private Pose2d getAutoSnapPose() {
+    Pose2d currPose = getPose();
+    Pose2d closestHP = targetingSystem.getHPZone(currPose);
+    if (closestHP == null) {
+      return getClosestReefFace(currPose);
+    } else return closestHP;
+  }
+
+  public void setPoseFacingReef() {
+    setPose(
+        AllianceFlipUtil.apply(Reef.centerFaces[0])
+            .plus(
+                new Transform2d(
+                    Meters.of(0.5).in(Meters),
+                    Meters.of(0).in(Meters),
+                    Rotation2d.fromDegrees(0))));
+  }
+
+  public Rotation2d getAutoSnapAngle() {
+    return autoSnapPose.getRotation();
   }
 
   /** Returns the module positions (turn angles and drive positions) for all of the modules. */
