@@ -55,6 +55,7 @@ public class OuttakeIOSpark implements OuttakeIO {
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(outtakeMotor, outtakeMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
     inputs.hasGP = (rearSensor.getMeasurement().distance_mm <= SensorTriggerDistance);
+    inputs.distance_mm = rearSensor.getMeasurement().distance_mm;
   }
 
   @Override
