@@ -16,7 +16,10 @@ package frc.robot.subsystems.outtake;
 import static frc.robot.subsystems.outtake.OuttakeConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
+import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
+import edu.wpi.first.wpilibj.Alert;
+
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -26,8 +29,8 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import java.util.function.DoubleSupplier;
 
 public class OuttakeIOSpark implements OuttakeIO {
-  private final SparkFlex outtakeMotor = new SparkFlex(outtakeCanId, MotorType.kBrushless);
-  private final LaserCan rearSensor = new LaserCan(SensorID);
+  private SparkFlex outtakeMotor = new SparkFlex(outtakeCanId, MotorType.kBrushless);
+  private LaserCan lc = new LaserCan(SensorID);
 
   public OuttakeIOSpark() {
 
@@ -44,17 +47,28 @@ public class OuttakeIOSpark implements OuttakeIO {
         () ->
             outtakeMotor.configure(
                 master_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    try {
+      lc.setRangingMode(LaserCan.RangingMode.SHORT);
+      lc.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    }
+    catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }
+    
   }
 
   @Override
   public void updateInputs(OuttakeIOInputs inputs) {
-
+    LaserCan.Measurement measurement = lc.getMeasurement();
+    if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT){
+      inputs.hasGP = (measurement.distance_mm <= SensorTriggerDistance);
+    }
+    else inputs.hasGP = false;
     ifOk(
         outtakeMotor,
         new DoubleSupplier[] {outtakeMotor::getAppliedOutput, outtakeMotor::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(outtakeMotor, outtakeMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
-    inputs.hasGP = (rearSensor.getMeasurement().distance_mm <= SensorTriggerDistance);
   }
 
   @Override
