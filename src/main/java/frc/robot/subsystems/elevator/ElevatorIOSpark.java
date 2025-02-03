@@ -141,6 +141,8 @@ public class ElevatorIOSpark implements ElevatorIO {
         masterMotor,
         masterEncoder::getPosition,
         (value) -> inputs.isAtSetpoint = Math.abs(value - setpoint) < PIDTolerance);
+
+    inputs.isAtPreHomingPos = isAtPreHomingPos();
   }
 
   @Override
@@ -166,5 +168,9 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   public boolean isAtSetpoint() {
     return isAtSetpoint;
+  }
+
+  public boolean isAtPreHomingPos(){
+    return Math.abs(masterEncoder.getPosition() - ElevatorConstants.preHomingPosition) < 0.02;
   }
 }

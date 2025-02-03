@@ -27,6 +27,7 @@ public interface ElevatorIO {
     public boolean isAtSetpoint = false;
     public boolean isHome = false;
     public int targetBranchLevel = ReefBranchLevel.L1.ordinal();
+    public boolean isAtPreHomingPos = false;
   }
 
   /** Update the set of loggable inputs. */
@@ -40,4 +41,5 @@ public interface ElevatorIO {
   public default void resetEncoder() {}
 
   public default void setHome(boolean isHome) {}
+
 }

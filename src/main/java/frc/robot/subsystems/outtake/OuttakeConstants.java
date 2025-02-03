@@ -19,5 +19,5 @@ public class OuttakeConstants {
   public static final int outtakeCanId = 59;
   public static final int currentLimit = 40;
 
-  public static final double SensorTriggerDistance = 50;
+  public static final double SensorTriggerDistance = 100;
 }
