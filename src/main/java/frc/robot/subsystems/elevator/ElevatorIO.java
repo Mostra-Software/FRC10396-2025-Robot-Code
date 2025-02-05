@@ -41,5 +41,4 @@ public interface ElevatorIO {
   public default void resetEncoder() {}
 
   public default void setHome(boolean isHome) {}
-
 }

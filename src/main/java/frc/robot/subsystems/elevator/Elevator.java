@@ -66,7 +66,7 @@ public class Elevator extends SubsystemBase {
     io.setHome(isHome);
   }
 
-  public boolean isAtPreHomingPos(){
+  public boolean isAtPreHomingPos() {
     return inputs.isAtPreHomingPos;
   }
 }

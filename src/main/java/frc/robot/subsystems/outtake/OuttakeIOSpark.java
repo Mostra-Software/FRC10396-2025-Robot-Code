@@ -16,6 +16,7 @@ package frc.robot.subsystems.outtake;
 import static frc.robot.subsystems.outtake.OuttakeConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
+import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -44,6 +45,14 @@ public class OuttakeIOSpark implements OuttakeIO {
         () ->
             outtakeMotor.configure(
                 master_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    try {
+      rearSensor.setRangingMode(LaserCan.RangingMode.SHORT);
+      rearSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(16, 16, 16, 16));
+      rearSensor.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    } catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }
   }
 
   @Override

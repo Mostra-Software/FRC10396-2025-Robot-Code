@@ -170,7 +170,7 @@ public class ElevatorIOSpark implements ElevatorIO {
     return isAtSetpoint;
   }
 
-  public boolean isAtPreHomingPos(){
+  public boolean isAtPreHomingPos() {
     return Math.abs(masterEncoder.getPosition() - ElevatorConstants.preHomingPosition) < 0.02;
   }
 }
