@@ -28,7 +28,7 @@ public class HomeElevator extends SequentialCommandGroup {
         new ParallelDeadlineGroup(
             new WaitCommand(0.05), new RunCommand(() -> elevator.runPercent(-0.1), elevator)),
         new RunCommand(() -> elevator.runPercent(-0.1), elevator)
-            .until(() -> elevator.getCurrent() > ElevatorConstants.homingCurrent),
+            .until(() -> elevator.getCurrent() > ElevatorConstants.homingCurrent).withTimeout(3),
         new InstantCommand(() -> elevator.runPercent(0), elevator),
         new InstantCommand(() -> elevator.resetEncoder(), elevator),
         new InstantCommand(() -> elevator.setHome(true), elevator));

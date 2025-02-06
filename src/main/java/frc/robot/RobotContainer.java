@@ -197,7 +197,7 @@ public class RobotContainer {
     //
     driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    autoScoreGetReady.onTrue(new AutoScore(elevator, driverJoy.rightTrigger(.5)));
+    autoScoreGetReady.onTrue(new AutoScore(elevator, outtake, driverJoy.rightTrigger(.5)));
 
     // Reset gyro to 0° when B button is pressed
     driverJoy

@@ -38,7 +38,4 @@ public class Outtake extends SubsystemBase {
     return inputs.hasGP;
   }
 
-  /*public boolean coralVisibleFront() {
-      return inputs.coralVisibleFront;
-  }*/
 }
