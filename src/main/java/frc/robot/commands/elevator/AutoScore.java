@@ -21,7 +21,7 @@ public class AutoScore extends SequentialCommandGroup {
     addCommands(
         // new InstantCommand(() -> System.out.println("Auto Score Initiated")),
         new AutoReefHeight(elevator).until(readyToScore),
-        new Shoot(outtake).withTimeout(0.2),
+        new Shoot(outtake).withTimeout(1.0),
         // new InstantCommand(() -> System.out.println("Homing")),
         new HomeElevator(elevator));
   }
