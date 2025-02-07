@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.vision.VisionConstants.*;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -46,6 +48,10 @@ import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeIO;
 import frc.robot.subsystems.outtake.OuttakeIOSim;
 import frc.robot.subsystems.outtake.OuttakeIOSpark;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.TargetingSystem;
 import frc.robot.util.TargetingSystem.ReefBranchLevel;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -63,6 +69,7 @@ public class RobotContainer {
   private final Outtake outtake;
   private final TargetingSystem targetingSystem;
   private final Leds leds = Leds.getInstance();
+  private final Vision vision;
 
   // Controller
   private final CommandXboxController driverJoy = new CommandXboxController(1);
@@ -91,6 +98,13 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIOSpark(), targetingSystem);
         outtake = new Outtake(new OuttakeIOSpark());
+
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                new VisionIOPhotonVision(camera1Name, robotToCamera1));
+
         break;
 
       case SIM:
@@ -107,6 +121,12 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIOSim(), targetingSystem);
         outtake = new Outtake(new OuttakeIOSim());
+
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
+                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         break;
 
       default:
@@ -123,6 +143,8 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIO() {}, targetingSystem);
         outtake = new Outtake(new OuttakeIO() {});
+
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
@@ -175,7 +197,7 @@ public class RobotContainer {
     //
     driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    autoScoreGetReady.onTrue(new AutoScore(elevator, driverJoy.rightTrigger(.5)));
+    autoScoreGetReady.onTrue(new AutoScore(elevator, outtake, driverJoy.rightTrigger(.5)));
 
     // Reset gyro to 0° when B button is pressed
     driverJoy

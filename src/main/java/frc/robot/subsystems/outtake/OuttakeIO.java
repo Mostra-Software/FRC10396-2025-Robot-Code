@@ -32,5 +32,4 @@ public interface OuttakeIO {
 
   public default void resetEncoder() {}
 
-  public default void outtakeRunClosedLoopVelocity(int rpm) {}
 }
