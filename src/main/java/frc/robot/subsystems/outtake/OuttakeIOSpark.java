@@ -18,23 +18,22 @@ import static frc.robot.util.SparkUtil.*;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
-import edu.wpi.first.wpilibj.Alert;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import java.util.function.DoubleSupplier;
 
 public class OuttakeIOSpark implements OuttakeIO {
-  private SparkFlex outtakeMotor = new SparkFlex(outtakeCanId, MotorType.kBrushless);
+  private SparkMax outtakeMotor = new SparkMax(outtakeCanId, MotorType.kBrushed);
   private LaserCan lc = new LaserCan(SensorID);
 
   public OuttakeIOSpark() {
 
-    var master_config = new SparkFlexConfig();
+    var master_config = new SparkMaxConfig();
 
     master_config
         .idleMode(IdleMode.kCoast)
