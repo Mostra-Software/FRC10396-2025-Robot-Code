@@ -49,9 +49,9 @@ public class OuttakeIOSpark implements OuttakeIO {
                 master_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     try {
-      rearSensor.setRangingMode(LaserCan.RangingMode.SHORT);
-      rearSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(16, 16, 16, 16));
-      rearSensor.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      lc.setRangingMode(LaserCan.RangingMode.SHORT);
+      lc.setRegionOfInterest(new LaserCan.RegionOfInterest(16, 16, 16, 16));
+      lc.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
@@ -69,8 +69,8 @@ public class OuttakeIOSpark implements OuttakeIO {
         new DoubleSupplier[] {outtakeMotor::getAppliedOutput, outtakeMotor::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(outtakeMotor, outtakeMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
-    inputs.hasGP = (rearSensor.getMeasurement().distance_mm <= SensorTriggerDistance);
-    inputs.distance_mm = rearSensor.getMeasurement().distance_mm;
+    inputs.hasGP = (lc.getMeasurement().distance_mm <= SensorTriggerDistance);
+    inputs.distance_mm = lc.getMeasurement().distance_mm;
   }
 
   @Override
