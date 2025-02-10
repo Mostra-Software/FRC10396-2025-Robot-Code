@@ -25,7 +25,7 @@ public class ElevatorConstants {
 
   public static final double homeSequenceSlowPoint = 15;
 
-  public static final double forwardSoftLimit = 0.600;
+  public static final double forwardSoftLimit = 0.615;
   public static final double reverseSoftLimit = 0;
   public static final double PD22t =
       Units.inchesToMeters(0.25) / Math.sin(Units.degreesToRadians(180. / 22.));
@@ -33,7 +33,7 @@ public class ElevatorConstants {
   // Position PID Parameters
   public static final double positionP = 15;
   public static final double positionI = 0.0;
-  public static final double positionD = 0.0;
+  public static final double positionD = 0.5;
   public static final double PIDTolerance = 0.100;
   public static final int maxVelocity = 5000;
   public static final int maxAcceleration = 12000;
@@ -47,5 +47,5 @@ public class ElevatorConstants {
   public static final double L1Height = 0.0;
   public static final double L2Height = 0.144;
   public static final double L3Height = 0.323;
-  public static final double L4Height = 0.595;
+  public static final double L4Height = 0.612;
 }
