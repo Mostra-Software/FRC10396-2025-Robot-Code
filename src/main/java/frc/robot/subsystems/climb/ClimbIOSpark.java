@@ -76,7 +76,7 @@ public class ClimbIOSpark implements ClimbIO {
         .reverseSoftLimitEnabled(false);
 
     slave_config
-        .follow(masterCanId, true)
+        .follow(masterCanId, false)
         .encoder
         .positionConversionFactor(1) // No unit
         .velocityConversionFactor(1) // No unit
