@@ -262,7 +262,7 @@ public class RobotContainer {
 
     // Openloop Climb
     operatorJoy.povRight().whileTrue(new SetClimbPercent(0.3, climb));
-    operatorJoy.povRight().whileTrue(new SetClimbPercent(-0.3, climb));
+    operatorJoy.povLeft().whileTrue(new SetClimbPercent(-0.3, climb));
   }
 
   /**
