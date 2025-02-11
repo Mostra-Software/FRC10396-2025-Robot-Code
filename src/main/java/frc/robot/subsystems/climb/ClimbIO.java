@@ -11,24 +11,28 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.outtake;
+package frc.robot.subsystems.climb;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface OuttakeIO {
+public interface ClimbIO {
   @AutoLog
-  public static class OuttakeIOInputs {
+  public static class ClimbIOInputs {
+    public double positionDeg = 0.0;
+    public double velocityDegPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
-    public double distance_mm = 0.0;
-    public boolean hasGP = false;
+    public double setpoint = 0.0;
+    public boolean isAtSetpoint = false;
   }
 
   /** Update the set of loggable inputs. */
-  public default void updateInputs(OuttakeIOInputs inputs) {}
+  public default void updateInputs(ClimbIOInputs inputs) {}
 
   /** Run open loop at the specified voltage. */
   public default void setVoltage(double volts) {}
+
+  public default void setDegree(double height) {}
 
   public default void resetEncoder() {}
 }

@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.outtake.Shoot;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.outtake.Outtake;
-
 import java.util.function.BooleanSupplier;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more

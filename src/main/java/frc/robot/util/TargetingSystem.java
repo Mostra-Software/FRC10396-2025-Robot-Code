@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Measure;
 import frc.robot.FieldConstants.*;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -113,7 +112,7 @@ public class TargetingSystem {
     return face;
   }
 
-  public boolean isInHpZone(Pose2d pose){
+  public boolean isInHpZone(Pose2d pose) {
     return (getHPZone(pose) != null);
   }
 

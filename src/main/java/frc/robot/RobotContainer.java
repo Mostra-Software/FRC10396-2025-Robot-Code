@@ -28,11 +28,16 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.climb.SetClimbPercent;
 import frc.robot.commands.elevator.AutoScore;
 import frc.robot.commands.elevator.HomeElevator;
 import frc.robot.commands.elevator.SetElevatorPercent;
 import frc.robot.commands.outtake.Intake;
 import frc.robot.commands.outtake.Shoot;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIO;
+import frc.robot.subsystems.climb.ClimbIOSim;
+import frc.robot.subsystems.climb.ClimbIOSpark;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -67,6 +72,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Elevator elevator;
   private final Outtake outtake;
+  private final Climb climb;
   private final TargetingSystem targetingSystem;
   private final Leds leds = Leds.getInstance();
   private final Vision vision;
@@ -98,6 +104,7 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIOSpark(), targetingSystem);
         outtake = new Outtake(new OuttakeIOSpark());
+        climb = new Climb(new ClimbIOSpark());
 
         vision =
             new Vision(
@@ -121,6 +128,7 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIOSim(), targetingSystem);
         outtake = new Outtake(new OuttakeIOSim());
+        climb = new Climb(new ClimbIOSim());
 
         vision =
             new Vision(
@@ -143,6 +151,7 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIO() {}, targetingSystem);
         outtake = new Outtake(new OuttakeIO() {});
+        climb = new Climb(new ClimbIO(){});
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
@@ -243,13 +252,17 @@ public class RobotContainer {
         .triangle()
         .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4)));
 
-    // Outtake ClosedLoop Shoot
+    // Outtake Shoot
     operatorJoy.R2().whileTrue(new Shoot(outtake));
     operatorJoy.R2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
 
-    // Outtake ClosedLoop Intake
+    // Outtake Intake
     operatorJoy.L2().whileTrue(new Intake(outtake));
     operatorJoy.L2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
+
+    // Openloop Climb
+    operatorJoy.povRight().whileTrue(new SetClimbPercent(0.3, climb));
+    operatorJoy.povRight().whileTrue(new SetClimbPercent(-0.3, climb));
   }
 
   /**

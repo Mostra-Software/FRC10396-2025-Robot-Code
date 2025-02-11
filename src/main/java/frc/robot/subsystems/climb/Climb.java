@@ -11,30 +11,34 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.outtake;
+package frc.robot.subsystems.climb;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-public class Outtake extends SubsystemBase {
-  private final OuttakeIO io;
-  private final OuttakeIOInputsAutoLogged inputs = new OuttakeIOInputsAutoLogged();
+public class Climb extends SubsystemBase {
+  private final ClimbIO io;
+  private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
 
-  public Outtake(OuttakeIO io) {
+  public Climb(ClimbIO io) {
     this.io = io;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Outtake", inputs);
+    Logger.processInputs("Climb", inputs);
   }
 
   public void runPercent(double percent) {
     io.setVoltage(percent * 12.0);
   }
 
-  public boolean hasGP() {
-    return inputs.hasGP;
+  public void resetEncoder() {
+    io.resetEncoder();
+  }
+
+  public double getCurrent() {
+    return inputs.currentAmps;
   }
 }

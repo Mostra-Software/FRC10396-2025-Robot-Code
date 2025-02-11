@@ -18,13 +18,12 @@ import static frc.robot.util.SparkUtil.*;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
-
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import java.util.function.DoubleSupplier;
 
 public class OuttakeIOSpark implements OuttakeIO {
@@ -59,10 +58,9 @@ public class OuttakeIOSpark implements OuttakeIO {
   @Override
   public void updateInputs(OuttakeIOInputs inputs) {
     LaserCan.Measurement measurement = lc.getMeasurement();
-    if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT){
+    if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
       inputs.hasGP = (measurement.distance_mm <= SensorTriggerDistance);
-    }
-    else inputs.hasGP = false;
+    } else inputs.hasGP = false;
     ifOk(
         outtakeMotor,
         new DoubleSupplier[] {outtakeMotor::getAppliedOutput, outtakeMotor::getBusVoltage},
