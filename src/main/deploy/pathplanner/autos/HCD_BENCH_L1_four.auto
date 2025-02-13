@@ -31,6 +31,18 @@
         {
           "type": "path",
           "data": {
+            "pathName": "HP_C_SCORE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C_HP"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "HP_D_SCORE"
           }
         },
@@ -44,6 +56,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "BENCH",
   "choreoAuto": false
 }

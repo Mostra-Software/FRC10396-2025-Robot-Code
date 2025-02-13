@@ -16,6 +16,8 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -151,7 +153,7 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIO() {}, targetingSystem);
         outtake = new Outtake(new OuttakeIO() {});
-        climb = new Climb(new ClimbIO(){});
+        climb = new Climb(new ClimbIO() {});
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
@@ -175,6 +177,15 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // Named Commands for Auton
+    NamedCommands.registerCommand(
+        "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint));
+
+    // Event Triggers for Auton
+    new EventTrigger("run_intake_trigger").whileTrue(new Intake(outtake).withTimeout(1.5));
+
+    new EventTrigger("run_shooter_trigger").whileTrue(new Shoot(outtake).withTimeout(1));
 
     // Configure the button bindings
     configureButtonBindings();

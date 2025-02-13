@@ -1,24 +1,27 @@
 {
-  "robotWidth": 0.87,
-  "robotLength": 0.87,
+  "robotWidth": 0.883,
+  "robotLength": 0.883,
   "holonomicMode": true,
   "pathFolders": [
-    "testpaths"
+    "G_H_L4",
+    "H_C_D_L1",
+    "I_L_K_L1"
   ],
   "autoFolders": [
-    "testautos"
+    "BENCH",
+    "FAR"
   ],
-  "defaultMaxVel": 3.0,
+  "defaultMaxVel": 5.0,
   "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 52.0,
-  "robotMOI": 6.883,
+  "robotMass": 60.0,
+  "robotMOI": 7.799,
   "robotTrackwidth": 0.546,
-  "driveWheelRadius": 0.05207,
-  "driveGearing": 5.143,
-  "maxDriveSpeed": 5.45,
+  "driveWheelRadius": 0.0479552,
+  "driveGearing": 5.902,
+  "maxDriveSpeed": 5.0,
   "driveMotorType": "vortex",
   "driveCurrentLimit": 60.0,
   "wheelCOF": 1.2,

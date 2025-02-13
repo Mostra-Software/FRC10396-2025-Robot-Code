@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.629,
-        "y": 0.735
+        "x": 5.433,
+        "y": 5.085
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.215600312362767,
-        "y": 2.4461842962014546
+        "x": 4.92791069618325,
+        "y": 5.532677578390487
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.6159354530567684,
-        "y": 2.9051237547762003
+        "x": 1.7085977285879619,
+        "y": 7.268991608796296
       },
       "prevControl": {
-        "x": 2.399430522141587,
-        "y": 1.5804518635572036
+        "x": 2.4171010693828743,
+        "y": 6.845850188664822
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,14 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "run_shooter_trigger",
-      "waypointRelativePos": 0.8476562500000052,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.0,
     "maxAcceleration": 5.0,
@@ -48,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 56.0
+    "velocity": 0.0,
+    "rotation": -55.0
   },
   "reversed": false,
-  "folder": "H_C_D_L1",
+  "folder": "I_L_K_L1",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 52.50000000000001
+    "velocity": 1.5,
+    "rotation": -125.00000000000001
   },
   "useDefaultConstraints": true
 }

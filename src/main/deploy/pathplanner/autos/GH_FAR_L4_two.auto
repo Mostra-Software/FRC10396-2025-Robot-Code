@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start_G"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4_Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "G_HP"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HP_H_SCORE"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4_Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "FAR",
+  "choreoAuto": false
+}
