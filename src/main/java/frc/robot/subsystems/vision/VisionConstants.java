@@ -17,11 +17,12 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
   // AprilTag layout
   public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "camera_0";
@@ -29,10 +30,31 @@ public class VisionConstants {
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
+  // y: 286.64677 mm left is positive / right is negative (while facing outtake)
+  // x: 340.62610 mm FRONT
+  // z: 271.38075 mm UP
+  // coordinate system reference:
+  // https://www.chiefdelphi.com/t/photon-vision-definition-of-robot-origin/455598/3?u=burakdemirelli
+  // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
+  public static final double mmToMeters = 0.001;
+  public static final double yPos = 286.64677 * mmToMeters;
+  public static final double xPos = 340.62610 * mmToMeters;
+  public static final double zPos = 271.38075 * mmToMeters;
+
+  // CAMERA 0 is Left Camera while Facing Outtake
   public static Transform3d robotToCamera0 =
-      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+      new Transform3d(
+          xPos,
+          yPos,
+          zPos,
+          new Rotation3d(0.0, -Units.degreesToRadians(15), Units.degreesToRadians(-25)));
+  // CAMERA 0 is Right Camera while Facing Outtake
   public static Transform3d robotToCamera1 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+      new Transform3d(
+          xPos,
+          -yPos,
+          zPos,
+          new Rotation3d(0.0, -Units.degreesToRadians(15), Units.degreesToRadians(25)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;

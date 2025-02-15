@@ -273,12 +273,12 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
-  private Pose2d getClosestReefFace(Pose2d currPose) {
+  public Pose2d getClosestReefFace(Pose2d currPose) {
     int faceIndex = targetingSystem.getNearestReefFace(currPose);
     if (faceIndex != -1) {
       return AllianceFlipUtil.apply(
           Reef.centerFaces[faceIndex].plus(
-              new Transform2d(Translation2d.kZero, Rotation2d.fromDegrees(0))));
+              new Transform2d(new Translation2d(0.5, 0), Rotation2d.fromDegrees(0))));
     } else return new Pose2d();
   }
 

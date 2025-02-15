@@ -22,7 +22,7 @@ import java.util.List;
 public class TargetingSystem {
 
   private AprilTagFieldLayout fieldLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
   private ReefBranch targetBranch;
   private ReefBranchLevel targetBranchLevel;
   private Transform2d robotBranchScoringOffset =
