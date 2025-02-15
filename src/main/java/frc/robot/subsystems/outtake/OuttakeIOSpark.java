@@ -18,8 +18,6 @@ import static frc.robot.util.SparkUtil.*;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
-import edu.wpi.first.wpilibj.Alert;
-
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -60,10 +58,9 @@ public class OuttakeIOSpark implements OuttakeIO {
   @Override
   public void updateInputs(OuttakeIOInputs inputs) {
     LaserCan.Measurement measurement = lc.getMeasurement();
-    if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT){
+    if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
       inputs.hasGP = (measurement.distance_mm <= SensorTriggerDistance);
-    }
-    else inputs.hasGP = false;
+    } else inputs.hasGP = false;
     ifOk(
         outtakeMotor,
         new DoubleSupplier[] {outtakeMotor::getAppliedOutput, outtakeMotor::getBusVoltage},

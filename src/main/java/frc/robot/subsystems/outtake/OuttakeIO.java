@@ -31,5 +31,4 @@ public interface OuttakeIO {
   public default void setVoltage(double volts) {}
 
   public default void resetEncoder() {}
-
 }

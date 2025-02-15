@@ -37,5 +37,4 @@ public class Outtake extends SubsystemBase {
   public boolean hasGP() {
     return inputs.hasGP;
   }
-
 }

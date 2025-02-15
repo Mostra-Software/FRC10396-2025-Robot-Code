@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.DriveCommands;
+import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.elevator.AutoScore;
 import frc.robot.commands.elevator.HomeElevator;
 import frc.robot.commands.elevator.SetElevatorPercent;
