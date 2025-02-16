@@ -14,20 +14,25 @@
 package frc.robot.subsystems.outtake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.TargetingSystem;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Outtake extends SubsystemBase {
   private final OuttakeIO io;
   private final OuttakeIOInputsAutoLogged inputs = new OuttakeIOInputsAutoLogged();
+  private TargetingSystem targetingSystem;
 
-  public Outtake(OuttakeIO io) {
+  public Outtake(OuttakeIO io, TargetingSystem targetingSystem) {
     this.io = io;
+    this.targetingSystem = targetingSystem;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Outtake", inputs);
+    targetingSystem.setGP(hasGP());
   }
 
   public void runPercent(double percent) {

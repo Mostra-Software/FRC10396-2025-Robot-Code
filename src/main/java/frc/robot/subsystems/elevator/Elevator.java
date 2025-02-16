@@ -32,6 +32,7 @@ public class Elevator extends SubsystemBase {
     io.updateInputs(inputs);
     inputs.targetBranchLevel = targetingSystem.getTargetBranchLevel().ordinal();
     Logger.processInputs("Elevator", inputs);
+    targetingSystem.updateElevHeight(inputs.positionMeters);
   }
 
   public void runPercent(double percent) {

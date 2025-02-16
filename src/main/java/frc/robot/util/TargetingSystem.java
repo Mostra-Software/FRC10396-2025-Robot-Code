@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 public class TargetingSystem {
 
   private AprilTagFieldLayout fieldLayout =
@@ -27,6 +29,9 @@ public class TargetingSystem {
   private ReefBranchLevel targetBranchLevel;
   private Transform2d robotBranchScoringOffset =
       new Transform2d(Inches.of(12).in(Meters), Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
+  private Boolean hasGP;
+  private double elevHeight;
+  private Pose2d robotPose;
 
   public double getTargetBranchHeightMeters() {
     switch (targetBranchLevel) {
@@ -41,6 +46,32 @@ public class TargetingSystem {
       }
     }
     return 0;
+  }
+
+  public void updateElevHeight(double height){
+    this.elevHeight = height;
+  }
+
+  @AutoLogOutput(key = "TargetingSystem/ElevHeight")
+  public double getElevHeight(){
+    return elevHeight;
+  }
+
+  public void setGP(boolean hasGP){
+    this.hasGP = hasGP;
+  }
+
+  @AutoLogOutput(key = "TargetingSystem/HasGP")
+  public boolean hasGP(){
+    return hasGP;
+  }
+
+  public void updateRobotPose(Pose2d currPose){
+    robotPose = currPose;
+  }
+
+  public Pose2d getRobotPose(){
+    return robotPose;
   }
 
   public void setTarget(ReefBranch targetBranch, ReefBranchLevel targetBranchLevel) {
@@ -116,6 +147,10 @@ public class TargetingSystem {
     return (getHPZone(pose) != null);
   }
 
+  public boolean shouldRunIntake(){
+    return isInHpZone(getRobotPose()) && !hasGP();
+  }
+
   public enum ReefBranch {
     A,
     B,
@@ -130,8 +165,6 @@ public class TargetingSystem {
     C,
     D
   }
-
-  public final HashMap<Double[], Integer> slopeToReefFace = new HashMap<Double[], Integer>();
 
   public enum ReefBranchLevel {
     L1,

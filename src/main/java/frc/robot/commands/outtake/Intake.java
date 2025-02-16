@@ -4,9 +4,11 @@
 
 package frc.robot.commands.outtake;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.outtake.Outtake;
 
@@ -16,16 +18,17 @@ import frc.robot.subsystems.outtake.Outtake;
 public class Intake extends SequentialCommandGroup {
 
   private Outtake outtake;
+  private CommandXboxController driver;
 
-  public Intake(Outtake outtake) {
+  public Intake(Outtake outtake, CommandXboxController driver) {
     this.outtake = outtake;
+    this.driver = driver;
 
     addCommands(
         new InstantCommand(() -> Leds.getInstance().intaking = true),
         new RunCommand(() -> outtake.runPercent(0.5), outtake).until(outtake::hasGP),
-        new RunCommand(() -> outtake.runPercent(0.3), outtake).until(() -> !outtake.hasGP()),
-        new RunCommand(() -> outtake.runPercent(-0.2), outtake).withTimeout(0.2),
         new InstantCommand(() -> outtake.runPercent(0), outtake),
-        new InstantCommand(() -> Leds.getInstance().intaking = false));
+        new InstantCommand(() -> Leds.getInstance().intaking = false),
+        new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0.4)).withTimeout(0.4));
   }
 }

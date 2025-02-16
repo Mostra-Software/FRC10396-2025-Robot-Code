@@ -29,8 +29,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.climb.SetClimbPercent;
+import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.elevator.AutoScore;
 import frc.robot.commands.elevator.HomeElevator;
 import frc.robot.commands.elevator.SetElevatorPercent;
@@ -105,7 +105,7 @@ public class RobotContainer {
                 targetingSystem);
 
         elevator = new Elevator(new ElevatorIOSpark(), targetingSystem);
-        outtake = new Outtake(new OuttakeIOSpark());
+        outtake = new Outtake(new OuttakeIOSpark(), targetingSystem);
         climb = new Climb(new ClimbIOSpark());
 
         vision =
@@ -129,7 +129,7 @@ public class RobotContainer {
                 targetingSystem);
 
         elevator = new Elevator(new ElevatorIOSim(), targetingSystem);
-        outtake = new Outtake(new OuttakeIOSim());
+        outtake = new Outtake(new OuttakeIOSim(), targetingSystem);
         climb = new Climb(new ClimbIOSim());
 
         vision =
@@ -152,7 +152,7 @@ public class RobotContainer {
                 targetingSystem);
 
         elevator = new Elevator(new ElevatorIO() {}, targetingSystem);
-        outtake = new Outtake(new OuttakeIO() {});
+        outtake = new Outtake(new OuttakeIO() {}, targetingSystem);
         climb = new Climb(new ClimbIO() {});
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
@@ -183,7 +183,7 @@ public class RobotContainer {
         "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint));
 
     // Event Triggers for Auton
-    new EventTrigger("run_intake_trigger").whileTrue(new Intake(outtake).withTimeout(1.5));
+    new EventTrigger("run_intake_trigger").whileTrue(new Intake(outtake, driverJoy).withTimeout(1.5));
 
     new EventTrigger("run_shooter_trigger").whileTrue(new Shoot(outtake).withTimeout(1));
 
@@ -198,6 +198,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    new Trigger(targetingSystem::shouldRunIntake)
+        .onTrue(new Intake(outtake, driverJoy));
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -268,7 +272,7 @@ public class RobotContainer {
     operatorJoy.R2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
 
     // Outtake Intake
-    operatorJoy.L2().whileTrue(new Intake(outtake));
+    operatorJoy.L2().whileTrue(new Intake(outtake, driverJoy));
     operatorJoy.L2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
 
     // Openloop Climb

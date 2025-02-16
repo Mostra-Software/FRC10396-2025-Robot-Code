@@ -34,11 +34,12 @@ public class AutoAlign extends Command {
   private Pose2d currPose = new Pose2d();
   private Pose2d delta = new Pose2d(99, 99, new Rotation2d(0));
 
-  ProfiledPIDController angleController = new ProfiledPIDController(
-      ANGLE_KP,
-      0.0,
-      ANGLE_KD,
-      new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+  ProfiledPIDController angleController =
+      new ProfiledPIDController(
+          ANGLE_KP,
+          0.0,
+          ANGLE_KD,
+          new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
 
   PIDController xController = new PIDController(0, 0, 0);
   PIDController yController = new PIDController(0, 0, 0);
@@ -62,39 +63,40 @@ public class AutoAlign extends Command {
     closestReef = drive.getClosestReefFace(currPose);
 
     // Get linear velocity
-    Translation2d linearVelocity = new Translation2d(
-      xController.calculate(currPose.getX(), closestReef.getX()),
-      yController.calculate(currPose.getY(), closestReef.getY()));
+    Translation2d linearVelocity =
+        new Translation2d(
+            xController.calculate(currPose.getX(), closestReef.getX()),
+            yController.calculate(currPose.getY(), closestReef.getY()));
 
     // Calculate angular speed
-    double omega = angleController.calculate(
-        drive.getRotation().getRadians(), closestReef.getRotation().getRadians());
+    double omega =
+        angleController.calculate(
+            drive.getRotation().getRadians(), closestReef.getRotation().getRadians());
 
     // Convert to field relative speeds & send command
-    ChassisSpeeds speeds = new ChassisSpeeds(
-        linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-        linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-        omega);
-    boolean isFlipped = DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == Alliance.Red;
+    ChassisSpeeds speeds =
+        new ChassisSpeeds(
+            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+            omega);
+    boolean isFlipped =
+        DriverStation.getAlliance().isPresent()
+            && DriverStation.getAlliance().get() == Alliance.Red;
     drive.runVelocity(
         ChassisSpeeds.fromFieldRelativeSpeeds(
             speeds,
-            isFlipped
-                ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                : drive.getRotation()));
-
+            isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return 
-    Math.abs(delta.getX()) < 0.03 && Math.abs(delta.getY()) < 0.03 && Math.abs(delta.getRotation().getDegrees()) < 2;
+    return Math.abs(delta.getX()) < 0.03
+        && Math.abs(delta.getY()) < 0.03
+        && Math.abs(delta.getRotation().getDegrees()) < 2;
   }
 }

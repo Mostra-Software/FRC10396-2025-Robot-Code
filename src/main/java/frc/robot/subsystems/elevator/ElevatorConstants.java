@@ -13,6 +13,7 @@
 
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 
 public class ElevatorConstants {
@@ -48,4 +49,7 @@ public class ElevatorConstants {
   public static final double L2Height = 0.144;
   public static final double L3Height = 0.323;
   public static final double L4Height = 0.612;
+  public static final double slowDownThreshold = 0;
+
+
 }
