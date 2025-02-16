@@ -113,8 +113,7 @@ public class Drive extends SubsystemBase {
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
-        new PPHolonomicDriveController(
-            new PIDConstants(5, 0.0, 0.0), new PIDConstants(10.0, 0.0, 0.5)),
+        new PPHolonomicDriveController(new PIDConstants(0, 0.0, 0.0), new PIDConstants(0, 0.0, 0)),
         config,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -278,7 +277,7 @@ public class Drive extends SubsystemBase {
     if (faceIndex != -1) {
       return AllianceFlipUtil.apply(
           Reef.centerFaces[faceIndex].plus(
-              new Transform2d(new Translation2d(0.5, 0), Rotation2d.fromDegrees(0))));
+              new Transform2d(new Translation2d(0.5, 0), Rotation2d.fromDegrees(180))));
     } else return new Pose2d();
   }
 

@@ -85,7 +85,7 @@ public class TargetingSystem {
     Measure distanceX = delta.getMeasureX();
     Measure distanceY = delta.getMeasureY();
     if (distanceX.abs(Meters) < 2 && distanceY.abs(Meters) < 2)
-      return nearestHP.plus(new Transform2d(Translation2d.kZero, Rotation2d.fromDegrees(180)));
+      return nearestHP.plus(new Transform2d(Translation2d.kZero, Rotation2d.fromDegrees(0)));
     else return null;
   }
 
