@@ -17,7 +17,6 @@ import edu.wpi.first.units.Measure;
 import frc.robot.FieldConstants.*;
 import java.util.Arrays;
 import java.util.List;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class TargetingSystem {
@@ -54,7 +53,6 @@ public class TargetingSystem {
 
   public double getElevHeight() {
     return elevHeight;
-    
   }
 
   public void setGP(boolean hasGP) {
@@ -62,7 +60,6 @@ public class TargetingSystem {
     this.hasGP = hasGP;
   }
 
-  
   public boolean hasGP() {
     return hasGP;
   }
@@ -151,17 +148,17 @@ public class TargetingSystem {
     // 1 is left branch
     int reefFace = getNearestReefFace();
     Pose2d scoringPose = Pose2d.kZero;
-    int branch = (reefFace == 1 )? reefFace*2 : reefFace + (reefFace + 1);
+    int branch = (side == 1) ? reefFace * 2 : reefFace + (reefFace + 1);
     if (targetBranchLevel != null)
-        scoringPose =
-            Reef.branchPositions
-                .get(branch)
-                .get(ReefHeight.L2)
-                .toPose2d()
-                .plus(robotBranchScoringOffset);
-      Logger.recordOutput("TargetingSystem/Nearest Branch", scoringPose);
-      return AllianceFlipUtil.apply(scoringPose);
-
+      scoringPose =
+          Reef.branchPositions
+              .get(branch)
+              .get(ReefHeight.L2)
+              .toPose2d()
+              .plus(robotBranchScoringOffset);
+    scoringPose = AllianceFlipUtil.apply(scoringPose);
+    Logger.recordOutput("TargetingSystem/Nearest Branch", scoringPose);
+    return scoringPose;
   }
 
   public boolean isInHpZone(Pose2d pose) {
