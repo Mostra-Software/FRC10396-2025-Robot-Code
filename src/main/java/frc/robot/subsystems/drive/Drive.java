@@ -65,22 +65,23 @@ public class Drive extends SubsystemBase {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
-  private final Alert gyroDisconnectedAlert = new Alert("Disconnected gyro, using kinematics as fallback.",
-      AlertType.kError);
+  private final Alert gyroDisconnectedAlert =
+      new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
   private Rotation2d rawGyroRotation = new Rotation2d();
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
-          new SwerveModulePosition(),
-          new SwerveModulePosition(),
-          new SwerveModulePosition(),
-          new SwerveModulePosition()
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, rawGyroRotation,
-      lastModulePositions, new Pose2d());
+  private SwerveDrivePoseEstimator poseEstimator =
+      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   private Pose2d autoSnapPose = new Pose2d();
+  private Pose2d closestBranch = new Pose2d();
   private TargetingSystem targetingSystem;
 
   InterpolatingDoubleTreeMap velMultiplier = new InterpolatingDoubleTreeMap();
@@ -138,14 +139,15 @@ public class Drive extends SubsystemBase {
         });
 
     // Configure SysId
-    sysId = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,
-            null,
-            null,
-            (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
-        new SysIdRoutine.Mechanism(
-            (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   @Override
@@ -172,7 +174,8 @@ public class Drive extends SubsystemBase {
     }
 
     // Update odometry
-    double[] sampleTimestamps = modules[0].getOdometryTimestamps(); // All signals are sampled together
+    double[] sampleTimestamps =
+        modules[0].getOdometryTimestamps(); // All signals are sampled together
     int sampleCount = sampleTimestamps.length;
     for (int i = 0; i < sampleCount; i++) {
       // Read wheel positions and deltas from each module
@@ -180,10 +183,11 @@ public class Drive extends SubsystemBase {
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
       for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
-        moduleDeltas[moduleIndex] = new SwerveModulePosition(
-            modulePositions[moduleIndex].distanceMeters
-                - lastModulePositions[moduleIndex].distanceMeters,
-            modulePositions[moduleIndex].angle);
+        moduleDeltas[moduleIndex] =
+            new SwerveModulePosition(
+                modulePositions[moduleIndex].distanceMeters
+                    - lastModulePositions[moduleIndex].distanceMeters,
+                modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
 
@@ -205,8 +209,10 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     autoSnapPose = getAutoSnapPose();
+    closestBranch = targetingSystem.getNearestBranch(1);
+    targetingSystem.updateRobotPose(getPose());
   }
-
+  
   /**
    * Runs the drive at the desired velocity.
    *
@@ -244,10 +250,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Stops the drive and turns the modules to an X arrangement to resist movement.
-   * The modules will
-   * return to their normal orientations the next time a nonzero velocity is
-   * requested.
+   * Stops the drive and turns the modules to an X arrangement to resist movement. The modules will
+   * return to their normal orientations the next time a nonzero velocity is requested.
    */
   public void stopWithX() {
     Rotation2d[] headings = new Rotation2d[4];
@@ -270,10 +274,7 @@ public class Drive extends SubsystemBase {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
-  /**
-   * Returns the module states (turn angles and drive velocities) for all of the
-   * modules.
-   */
+  /** Returns the module states (turn angles and drive velocities) for all of the modules. */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
@@ -283,24 +284,22 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
-  public Pose2d getClosestReefFace(Pose2d currPose) {
-    int faceIndex = targetingSystem.getNearestReefFace(currPose);
+  public Pose2d getClosestReefFace() {
+    int faceIndex = targetingSystem.getNearestReefFace();
     if (faceIndex != -1) {
       return AllianceFlipUtil.apply(
           Reef.centerFaces[faceIndex].plus(
               new Transform2d(new Translation2d(0.5, 0), Rotation2d.fromDegrees(0))));
-    } else
-      return new Pose2d();
+    } else return new Pose2d();
   }
 
   @AutoLogOutput(key = "TargetingSystem/AutoSnapPose")
   private Pose2d getAutoSnapPose() {
     Pose2d currPose = getPose();
-    Pose2d closestHP = targetingSystem.getHPZone(currPose);
+    Pose2d closestHP = targetingSystem.getHPZone();
     if (closestHP == null) {
-      return getClosestReefFace(currPose);
-    } else
-      return closestHP;
+      return getClosestReefFace();
+    } else return closestHP;
   }
 
   public void setPoseFacingReef() {
@@ -317,10 +316,7 @@ public class Drive extends SubsystemBase {
     return autoSnapPose.getRotation();
   }
 
-  /**
-   * Returns the module positions (turn angles and drive positions) for all of the
-   * modules.
-   */
+  /** Returns the module positions (turn angles and drive positions) for all of the modules. */
   private SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] states = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
@@ -387,8 +383,7 @@ public class Drive extends SubsystemBase {
     double elevHeight = targetingSystem.getElevHeight();
     if (elevHeight != Double.NaN && elevHeight > ElevatorConstants.L2Height) {
       return velMultiplier.get(elevHeight);
-    }
-    else return 1.0;
+    } else return 1.0;
   }
 
   /** Returns the maximum angular speed in radians per sec. */

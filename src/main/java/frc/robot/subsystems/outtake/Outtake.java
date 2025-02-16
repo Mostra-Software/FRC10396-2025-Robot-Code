@@ -15,7 +15,6 @@ package frc.robot.subsystems.outtake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.TargetingSystem;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Outtake extends SubsystemBase {

@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 
 public class ClimbIOSim implements ClimbIO {
   private DCMotor gearbox = DCMotor.getNeoVortex(2);
-  private SparkFlex masterMotor = new SparkFlex(11, MotorType.kBrushless);
+  private SparkFlex masterMotor = new SparkFlex(0, MotorType.kBrushless);
   private SparkFlexSim simFlex = new SparkFlexSim(masterMotor, gearbox);
   private SparkClosedLoopController closedLoopController = masterMotor.getClosedLoopController();
 

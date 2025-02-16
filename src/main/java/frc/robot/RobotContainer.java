@@ -183,7 +183,8 @@ public class RobotContainer {
         "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint));
 
     // Event Triggers for Auton
-    new EventTrigger("run_intake_trigger").whileTrue(new Intake(outtake, driverJoy).withTimeout(1.5));
+    new EventTrigger("run_intake_trigger")
+        .whileTrue(new Intake(outtake, driverJoy).withTimeout(1.5));
 
     new EventTrigger("run_shooter_trigger").whileTrue(new Shoot(outtake).withTimeout(1));
 
@@ -199,8 +200,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new Trigger(targetingSystem::shouldRunIntake)
-        .onTrue(new Intake(outtake, driverJoy));
+    new Trigger(targetingSystem::shouldRunIntake).onTrue(new Intake(outtake, driverJoy));
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(

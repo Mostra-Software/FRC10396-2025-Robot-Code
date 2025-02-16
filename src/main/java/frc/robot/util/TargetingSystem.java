@@ -16,10 +16,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Measure;
 import frc.robot.FieldConstants.*;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class TargetingSystem {
 
@@ -29,9 +28,9 @@ public class TargetingSystem {
   private ReefBranchLevel targetBranchLevel;
   private Transform2d robotBranchScoringOffset =
       new Transform2d(Inches.of(12).in(Meters), Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
-  private Boolean hasGP;
-  private double elevHeight;
-  private Pose2d robotPose;
+  private Boolean hasGP = false;
+  private double elevHeight = 0.0;
+  private Pose2d robotPose = new Pose2d();
 
   public double getTargetBranchHeightMeters() {
     switch (targetBranchLevel) {
@@ -48,29 +47,31 @@ public class TargetingSystem {
     return 0;
   }
 
-  public void updateElevHeight(double height){
+  public void updateElevHeight(double height) {
+    Logger.recordOutput("TargetingSystem/Elev Height", elevHeight);
     this.elevHeight = height;
   }
 
-  @AutoLogOutput(key = "TargetingSystem/ElevHeight")
-  public double getElevHeight(){
+  public double getElevHeight() {
     return elevHeight;
+    
   }
 
-  public void setGP(boolean hasGP){
+  public void setGP(boolean hasGP) {
+    Logger.recordOutput("TargetingSystem/HasGP", hasGP);
     this.hasGP = hasGP;
   }
 
-  @AutoLogOutput(key = "TargetingSystem/HasGP")
-  public boolean hasGP(){
+  
+  public boolean hasGP() {
     return hasGP;
   }
 
-  public void updateRobotPose(Pose2d currPose){
+  public void updateRobotPose(Pose2d currPose) {
     robotPose = currPose;
   }
 
-  public Pose2d getRobotPose(){
+  public Pose2d getRobotPose() {
     return robotPose;
   }
 
@@ -80,6 +81,7 @@ public class TargetingSystem {
   }
 
   public void setTarget(ReefBranchLevel targetBranchLevel) {
+    Logger.recordOutput("TargetingSystem/BranchLevel", targetBranchLevel);
     this.targetBranchLevel = targetBranchLevel;
   }
 
@@ -106,7 +108,8 @@ public class TargetingSystem {
     return AllianceFlipUtil.apply(scoringPose);
   }
 
-  public Pose2d getHPZone(Pose2d robotPose) {
+  public Pose2d getHPZone() {
+    Pose2d robotPose = getRobotPose();
     Pose2d nearestHP =
         robotPose.nearest(
             Arrays.asList(
@@ -132,22 +135,40 @@ public class TargetingSystem {
     } else return Arrays.asList(Reef.centerFaces);
   }
 
-  public int getNearestReefFace(Pose2d robotPose) {
+  public int getNearestReefFace() {
     int face = 0;
     try {
       List<Pose2d> reefFaces = getFlippedReefFaces();
-      Pose2d targetFace = robotPose.nearest(reefFaces);
+      Pose2d targetFace = getRobotPose().nearest(reefFaces);
       face = reefFaces.indexOf(targetFace);
     } catch (Exception e) {
     }
     return face;
   }
 
-  public boolean isInHpZone(Pose2d pose) {
-    return (getHPZone(pose) != null);
+  public Pose2d getNearestBranch(int side) {
+    // 0 is right branch
+    // 1 is left branch
+    int reefFace = getNearestReefFace();
+    Pose2d scoringPose = Pose2d.kZero;
+    int branch = (reefFace == 1 )? reefFace*2 : reefFace + (reefFace + 1);
+    if (targetBranchLevel != null)
+        scoringPose =
+            Reef.branchPositions
+                .get(branch)
+                .get(ReefHeight.L2)
+                .toPose2d()
+                .plus(robotBranchScoringOffset);
+      Logger.recordOutput("TargetingSystem/Nearest Branch", scoringPose);
+      return AllianceFlipUtil.apply(scoringPose);
+
   }
 
-  public boolean shouldRunIntake(){
+  public boolean isInHpZone(Pose2d pose) {
+    return (getHPZone() != null);
+  }
+
+  public boolean shouldRunIntake() {
     return isInHpZone(getRobotPose()) && !hasGP();
   }
 

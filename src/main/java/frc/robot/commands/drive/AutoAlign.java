@@ -53,14 +53,14 @@ public class AutoAlign extends Command {
   public void initialize() {
     angleController.enableContinuousInput(-Math.PI, Math.PI);
     currPose = drive.getPose();
-    closestReef = drive.getClosestReefFace(currPose);
+    closestReef = drive.getClosestReefFace();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     currPose = drive.getPose();
-    closestReef = drive.getClosestReefFace(currPose);
+    closestReef = drive.getClosestReefFace();
 
     // Get linear velocity
     Translation2d linearVelocity =
