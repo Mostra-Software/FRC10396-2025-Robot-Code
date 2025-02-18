@@ -21,10 +21,12 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -61,231 +63,260 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.TargetingSystem;
 import frc.robot.util.TargetingSystem.ReefBranchLevel;
+import frc.robot.util.TargetingSystem.ReefBranchSide;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Subsystems
-  private final Drive drive;
-  private final Elevator elevator;
-  private final Outtake outtake;
-  private final Climb climb;
-  private final TargetingSystem targetingSystem;
-  private final Leds leds = Leds.getInstance();
-  private final Vision vision;
+    // Subsystems
+    private final Drive drive;
+    private final Elevator elevator;
+    private final Outtake outtake;
+    private final Climb climb;
+    private final TargetingSystem targetingSystem;
+    private final Leds leds = Leds.getInstance();
+    private final Vision vision;
 
-  // Controller
-  private final CommandXboxController driverJoy = new CommandXboxController(1);
+    // Controller
+    private final CommandXboxController driverJoy = new CommandXboxController(1);
 
-  private final CommandPS5Controller operatorJoy = new CommandPS5Controller(2);
-  private Trigger autoScoreGetReady = driverJoy.leftTrigger(0.5);
+    private final CommandPS5Controller operatorJoy = new CommandPS5Controller(2);
+    private Trigger autoScoreGetReady = driverJoy.leftTrigger(0.5);
 
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+    // Dashboard inputs
+    private final LoggedDashboardChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
 
-    switch (Constants.currentMode) {
-      case REAL:
-        // Real robot, instantiate hardware IO implementations
-        targetingSystem = new TargetingSystem();
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOSpark(0),
-                new ModuleIOSpark(1),
-                new ModuleIOSpark(2),
-                new ModuleIOSpark(3),
-                targetingSystem);
+        switch (Constants.currentMode) {
+            case REAL:
+                // Real robot, instantiate hardware IO implementations
+                targetingSystem = new TargetingSystem();
+                drive = new Drive(
+                        new GyroIOPigeon2(),
+                        new ModuleIOSpark(0),
+                        new ModuleIOSpark(1),
+                        new ModuleIOSpark(2),
+                        new ModuleIOSpark(3),
+                        targetingSystem);
 
-        elevator = new Elevator(new ElevatorIOSpark(), targetingSystem);
-        outtake = new Outtake(new OuttakeIOSpark(), targetingSystem);
-        climb = new Climb(new ClimbIOSpark());
+                elevator = new Elevator(new ElevatorIOSpark(), targetingSystem);
+                outtake = new Outtake(new OuttakeIOSpark(), targetingSystem);
+                climb = new Climb(new ClimbIOSpark());
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1));
+                vision = new Vision(
+                        drive::addVisionMeasurement,
+                        new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                        new VisionIOPhotonVision(camera1Name, robotToCamera1));
 
-        break;
+                break;
 
-      case SIM:
-        targetingSystem = new TargetingSystem();
-        // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                targetingSystem);
+            case SIM:
+                targetingSystem = new TargetingSystem();
+                // Sim robot, instantiate physics sim IO implementations
+                drive = new Drive(
+                        new GyroIO() {
+                        },
+                        new ModuleIOSim(),
+                        new ModuleIOSim(),
+                        new ModuleIOSim(),
+                        new ModuleIOSim(),
+                        targetingSystem);
 
-        elevator = new Elevator(new ElevatorIOSim(), targetingSystem);
-        outtake = new Outtake(new OuttakeIOSim(), targetingSystem);
-        climb = new Climb(new ClimbIOSim());
+                elevator = new Elevator(new ElevatorIOSim(), targetingSystem);
+                outtake = new Outtake(new OuttakeIOSim(), targetingSystem);
+                climb = new Climb(new ClimbIOSim());
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
-        break;
+                vision = new Vision(
+                        drive::addVisionMeasurement,
+                        new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
+                        new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+                break;
 
-      default:
-        targetingSystem = new TargetingSystem();
-        // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                targetingSystem);
+            default:
+                targetingSystem = new TargetingSystem();
+                // Replayed robot, disable IO implementations
+                drive = new Drive(
+                        new GyroIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        targetingSystem);
 
-        elevator = new Elevator(new ElevatorIO() {}, targetingSystem);
-        outtake = new Outtake(new OuttakeIO() {}, targetingSystem);
-        climb = new Climb(new ClimbIO() {});
+                elevator = new Elevator(new ElevatorIO() {
+                }, targetingSystem);
+                outtake = new Outtake(new OuttakeIO() {
+                }, targetingSystem);
+                climb = new Climb(new ClimbIO() {
+                });
 
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        break;
+                vision = new Vision(drive::addVisionMeasurement, new VisionIO() {
+                }, new VisionIO() {
+                });
+                break;
+        }
+
+        // Set up auto routines
+        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+        // Set up SysId routines
+        autoChooser.addOption(
+                "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+        autoChooser.addOption(
+                "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+        autoChooser.addOption(
+                "Drive SysId (Quasistatic Forward)",
+                drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Drive SysId (Quasistatic Reverse)",
+                drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+        // Named Commands for Auton
+        NamedCommands.registerCommand(
+                "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint));
+
+        // Event Triggers for Auton
+        new EventTrigger("run_intake_trigger")
+                .whileTrue(new Intake(outtake, driverJoy).withTimeout(1.5));
+
+        new EventTrigger("run_shooter_trigger").whileTrue(new Shoot(outtake).withTimeout(1));
+
+        // Configure the button bindings
+        configureButtonBindings();
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    /**
+     * Use this method to define your button->command mappings. Buttons can be
+     * created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+     * it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+    private void configureButtonBindings() {
 
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        new Trigger(targetingSystem::shouldRunIntake).onTrue(new Intake(outtake, driverJoy));
 
-    // Named Commands for Auton
-    NamedCommands.registerCommand(
-        "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint));
+        // Default command, normal field-relative drive
+        drive.setDefaultCommand(
+                DriveCommands.joystickDrive(
+                        drive,
+                        () -> -driverJoy.getLeftY(),
+                        () -> -driverJoy.getLeftX(),
+                        () -> -driverJoy.getRightX()));
 
-    // Event Triggers for Auton
-    new EventTrigger("run_intake_trigger")
-        .whileTrue(new Intake(outtake, driverJoy).withTimeout(1.5));
+        // Lock to 0° when A button is held
+        driverJoy
+                .a()
+                .whileTrue(
+                        DriveCommands.joystickDriveAutoSnap(
+                                drive, () -> -driverJoy.getLeftY(), () -> -driverJoy.getLeftX()));
 
-    new EventTrigger("run_shooter_trigger").whileTrue(new Shoot(outtake).withTimeout(1));
+        driverJoy
+                .leftBumper()
+                .onTrue(
+                        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+                                .andThen(new RunCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 1)))
+                                .withTimeout(0.2)
+                                .andThen(new InstantCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 0))));
 
-    // Configure the button bindings
-    configureButtonBindings();
-  }
+        driverJoy
+                .rightBumper()
+                .onTrue(
+                        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT))
+                                .andThen(new RunCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 1)))
+                                .withTimeout(0.2)
+                                .andThen(new InstantCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 0))));
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
+        // Switch to X pattern when X button is pressed
+        //
+        driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    new Trigger(targetingSystem::shouldRunIntake).onTrue(new Intake(outtake, driverJoy));
+        autoScoreGetReady.onTrue(new AutoScore(elevator, outtake, driverJoy.rightTrigger(.5)));
 
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driverJoy.getLeftY(),
-            () -> -driverJoy.getLeftX(),
-            () -> -driverJoy.getRightX()));
+        // Reset gyro to 0° when B button is pressed
+        driverJoy
+                .b()
+                .onTrue(
+                        Commands.runOnce(
+                                () -> drive.setPose(
+                                        new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                                drive)
+                                .ignoringDisable(true));
 
-    // Lock to 0° when A button is held
-    driverJoy
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAutoSnap(
-                drive, () -> -driverJoy.getLeftY(), () -> -driverJoy.getLeftX()));
+        driverJoy.y().onTrue(Commands.runOnce(() -> drive.setPoseFacingReef()).ignoringDisable(true));
 
-    // Switch to X pattern when X button is pressed
-    //
-    driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+        // Elevator Openloop Up
+        operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
 
-    autoScoreGetReady.onTrue(new AutoScore(elevator, outtake, driverJoy.rightTrigger(.5)));
+        // Elevator Openloop Down
+        operatorJoy.povDown().whileTrue(new SetElevatorPercent(-0.5, elevator));
 
-    // Reset gyro to 0° when B button is pressed
-    driverJoy
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+        // Elevator ClosedLoop Controls
 
-    driverJoy.y().onTrue(Commands.runOnce(() -> drive.setPoseFacingReef()).ignoringDisable(true));
+        // Home
+        operatorJoy.L1().whileTrue(new HomeElevator(elevator));
 
-    // Elevator Openloop Up
-    operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
+        // L1
+        operatorJoy
+                .cross()
+                .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L1)));
 
-    // Elevator Openloop Down
-    operatorJoy.povDown().whileTrue(new SetElevatorPercent(-0.5, elevator));
+        // L2
+        operatorJoy
+                .square()
+                .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2)));
 
-    // Elevator ClosedLoop Controls
+        // L3
+        operatorJoy
+                .circle()
+                .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3)));
 
-    // Home
-    operatorJoy.L1().whileTrue(new HomeElevator(elevator));
+        // L4
+        operatorJoy
+                .triangle()
+                .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4)));
 
-    // L1
-    operatorJoy
-        .cross()
-        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L1)));
+        // Outtake Shoot
+        operatorJoy.R2().whileTrue(new Shoot(outtake));
+        operatorJoy.R2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
 
-    // L2
-    operatorJoy
-        .square()
-        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2)));
+        // Outtake Intake
+        operatorJoy.L2().whileTrue(new Intake(outtake, driverJoy));
+        operatorJoy.L2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
 
-    // L3
-    operatorJoy
-        .circle()
-        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3)));
+        // Openloop Climb
+        operatorJoy.povRight().whileTrue(new SetClimbPercent(0.3, climb));
+        operatorJoy.povLeft().whileTrue(new SetClimbPercent(-0.3, climb));
+    }
 
-    // L4
-    operatorJoy
-        .triangle()
-        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4)));
-
-    // Outtake Shoot
-    operatorJoy.R2().whileTrue(new Shoot(outtake));
-    operatorJoy.R2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
-
-    // Outtake Intake
-    operatorJoy.L2().whileTrue(new Intake(outtake, driverJoy));
-    operatorJoy.L2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
-
-    // Openloop Climb
-    operatorJoy.povRight().whileTrue(new SetClimbPercent(0.3, climb));
-    operatorJoy.povLeft().whileTrue(new SetClimbPercent(-0.3, climb));
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return autoChooser.get();
-  }
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        return autoChooser.get();
+    }
 }

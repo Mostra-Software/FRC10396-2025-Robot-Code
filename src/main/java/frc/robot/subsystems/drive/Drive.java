@@ -209,7 +209,7 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     autoSnapPose = getAutoSnapPose();
-    closestBranch = targetingSystem.getNearestBranch(1);
+    closestBranch = targetingSystem.getNearestBranchSide();
     targetingSystem.updateRobotPose(getPose());
   }
 

@@ -24,9 +24,12 @@ public class TargetingSystem {
   private AprilTagFieldLayout fieldLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
   private ReefBranch targetBranch;
-  private ReefBranchLevel targetBranchLevel;
+  private ReefBranchLevel targetBranchLevel = ReefBranchLevel.L2;
+  private ReefBranchSide reefBranchSide = ReefBranchSide.RIGHT;
   private Transform2d robotBranchScoringOffset =
-      new Transform2d(Inches.of(12).in(Meters), Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
+      new Transform2d((0.883/2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
+  private Transform2d robotHPOffset =
+      new Transform2d((0.883/2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(180));
   private Boolean hasGP = false;
   private double elevHeight = 0.0;
   private Pose2d robotPose = new Pose2d();
@@ -53,6 +56,15 @@ public class TargetingSystem {
 
   public double getElevHeight() {
     return elevHeight;
+  }
+
+  public void setBranchSide(ReefBranchSide side) {
+    Logger.recordOutput("TargetingSystem/Branch Side", side);
+    reefBranchSide = side;
+  }
+
+  public ReefBranchSide getBranchSide() {
+    return reefBranchSide;
   }
 
   public void setGP(boolean hasGP) {
@@ -116,7 +128,7 @@ public class TargetingSystem {
     Measure distanceX = delta.getMeasureX();
     Measure distanceY = delta.getMeasureY();
     if (distanceX.abs(Meters) < 2 && distanceY.abs(Meters) < 2)
-      return nearestHP.plus(new Transform2d(Translation2d.kZero, Rotation2d.fromDegrees(180)));
+      return nearestHP.plus(robotHPOffset);
     else return null;
   }
 
@@ -143,12 +155,12 @@ public class TargetingSystem {
     return face;
   }
 
-  public Pose2d getNearestBranch(int side) {
+  public Pose2d getNearestBranchSide() {
     // 0 is right branch
     // 1 is left branch
     int reefFace = getNearestReefFace();
     Pose2d scoringPose = Pose2d.kZero;
-    int branch = (side == 1) ? reefFace * 2 : reefFace + (reefFace + 1);
+    int branch = (getBranchSide() == ReefBranchSide.LEFT) ? reefFace * 2 : reefFace + (reefFace + 1);
     if (targetBranchLevel != null)
       scoringPose =
           Reef.branchPositions
@@ -182,6 +194,11 @@ public class TargetingSystem {
     F,
     C,
     D
+  }
+
+  public enum ReefBranchSide {
+    RIGHT,
+    LEFT
   }
 
   public enum ReefBranchLevel {
