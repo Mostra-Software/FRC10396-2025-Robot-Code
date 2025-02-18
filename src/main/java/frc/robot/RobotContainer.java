@@ -18,6 +18,8 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -44,6 +46,7 @@ import frc.robot.subsystems.climb.ClimbIO;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOSpark;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -62,9 +65,11 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.DoublePressTracker;
 import frc.robot.util.TargetingSystem;
 import frc.robot.util.TargetingSystem.ReefBranchLevel;
 import frc.robot.util.TargetingSystem.ReefBranchSide;
+import lombok.experimental.ExtensionMethod;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -76,6 +81,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
+@ExtensionMethod({ DoublePressTracker.class })
 public class RobotContainer {
     // Subsystems
     private final Drive drive;
@@ -90,6 +96,7 @@ public class RobotContainer {
     private final CommandXboxController driverJoy = new CommandXboxController(1);
 
     private final CommandPS5Controller operatorJoy = new CommandPS5Controller(2);
+
     private Trigger autoScoreGetReady = driverJoy.leftTrigger(0.5);
 
     // Dashboard inputs
@@ -217,15 +224,17 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
 
-        new Trigger(targetingSystem::shouldRunIntake).onTrue(new Intake(outtake, driverJoy));
+        new Trigger(targetingSystem::shouldRunIntake)
+                .and(targetingSystem::isAutoAssistedTeleop)
+                .onTrue(new Intake(outtake, driverJoy));
 
         // Default command, normal field-relative drive
         drive.setDefaultCommand(
                 DriveCommands.joystickDrive(
                         drive,
-                        () -> -driverJoy.getLeftY(),
-                        () -> -driverJoy.getLeftX(),
-                        () -> -driverJoy.getRightX()));
+                        () -> MathUtil.applyDeadband(-driverJoy.getLeftY(), DriveConstants.driverDeadband),
+                        () -> MathUtil.applyDeadband(-driverJoy.getLeftX(), DriveConstants.driverDeadband),
+                        () -> MathUtil.applyDeadband(-driverJoy.getRightX(), DriveConstants.driverDeadband)));
 
         // Lock to 0° when A button is held
         driverJoy
@@ -266,11 +275,12 @@ public class RobotContainer {
                                 drive)
                                 .ignoringDisable(true));
 
-    // driverJoy.y().onTrue(Commands.runOnce(() ->
-    // drive.setPoseFacingReef()).ignoringDisable(true));
-    driverJoy.y().whileTrue(new AutoAlign(drive));
-    // Elevator Openloop Up
-    operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
+        // driverJoy.y().onTrue(Commands.runOnce(() ->
+        // drive.setPoseFacingReef()).ignoringDisable(true));
+        driverJoy.y().whileTrue(new AutoAlign(drive, targetingSystem));
+
+        // Elevator Openloop Up
+        operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
 
         // Elevator Openloop Down
         operatorJoy.povDown().whileTrue(new SetElevatorPercent(-0.5, elevator));
@@ -280,6 +290,11 @@ public class RobotContainer {
         // Home
         operatorJoy.L1().whileTrue(new HomeElevator(elevator));
 
+        // Auto Assist Toggle for Teleop
+        driverJoy
+                .x()
+                .doublePress()
+                .onTrue(new InstantCommand(() -> targetingSystem.toggleAutoAssist()));
         // L1
         operatorJoy
                 .cross()
@@ -301,17 +316,25 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4)));
 
         // Outtake Shoot
-        operatorJoy.R2().whileTrue(new Shoot(outtake));
-        operatorJoy.R2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
+        operatorJoy
+                .R2()
+                .whileTrue(new Shoot(outtake))
+                .whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
 
         // Outtake Intake
-        operatorJoy.L2().whileTrue(new Intake(outtake, driverJoy));
-        operatorJoy.L2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
+        operatorJoy
+                .L2()
+                .whileTrue(new Intake(outtake, driverJoy))
+                .whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
 
-    // Openloop Climb
-    operatorJoy.povRight().whileTrue(new SetClimbPercent(0.75, climb));
-    operatorJoy.povLeft().whileTrue(new SetClimbPercent(-0.75, climb));
-  }
+        // Openloop Climb
+        operatorJoy.povRight().whileTrue(new SetClimbPercent(0.75, climb));
+        operatorJoy.povLeft().whileTrue(new SetClimbPercent(-0.75, climb));
+    }
+
+    public TargetingSystem getTargetingSystem() {
+        return targetingSystem;
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

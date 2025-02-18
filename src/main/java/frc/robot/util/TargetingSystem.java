@@ -27,12 +27,13 @@ public class TargetingSystem {
   private ReefBranchLevel targetBranchLevel = ReefBranchLevel.L2;
   private ReefBranchSide reefBranchSide = ReefBranchSide.RIGHT;
   private Transform2d robotBranchScoringOffset =
-      new Transform2d((0.883/2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
+      new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
   private Transform2d robotHPOffset =
-      new Transform2d((0.883/2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(180));
+      new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(180));
   private Boolean hasGP = false;
   private double elevHeight = 0.0;
   private Pose2d robotPose = new Pose2d();
+  private RobotState robotState = RobotState.AUTO;
 
   public double getTargetBranchHeightMeters() {
     switch (targetBranchLevel) {
@@ -47,6 +48,27 @@ public class TargetingSystem {
       }
     }
     return 0;
+  }
+
+  public void setRobotState(RobotState state) {
+    Logger.recordOutput("TargetingSystem/Robot State", state);
+    robotState = state;
+  }
+
+  public void toggleAutoAssist() {
+    if (robotState == RobotState.AUTO_ASSISTED_TELEOP) {
+      setRobotState(RobotState.MANUAL_TELEOP);
+    } else if (robotState == RobotState.MANUAL_TELEOP) {
+      setRobotState(RobotState.AUTO_ASSISTED_TELEOP);
+    }
+  }
+
+  public RobotState getRobotState() {
+    return robotState;
+  }
+
+  public boolean isAutoAssistedTeleop(){
+    return robotState == RobotState.AUTO_ASSISTED_TELEOP;
   }
 
   public void updateElevHeight(double height) {
@@ -155,12 +177,21 @@ public class TargetingSystem {
     return face;
   }
 
+  public Pose2d getClosestReefFace() {
+    int faceIndex = getNearestReefFace();
+    if (faceIndex != -1) {
+      return AllianceFlipUtil.apply(
+          Reef.centerFaces[faceIndex].plus(robotBranchScoringOffset));
+    } else return new Pose2d();
+  }
+
   public Pose2d getNearestBranchSide() {
     // 0 is right branch
     // 1 is left branch
     int reefFace = getNearestReefFace();
     Pose2d scoringPose = Pose2d.kZero;
-    int branch = (getBranchSide() == ReefBranchSide.LEFT) ? reefFace * 2 : reefFace + (reefFace + 1);
+    int branch =
+        (getBranchSide() == ReefBranchSide.LEFT) ? reefFace * 2 : reefFace + (reefFace + 1);
     if (targetBranchLevel != null)
       scoringPose =
           Reef.branchPositions
@@ -194,6 +225,12 @@ public class TargetingSystem {
     F,
     C,
     D
+  }
+
+  public enum RobotState {
+    AUTO,
+    MANUAL_TELEOP,
+    AUTO_ASSISTED_TELEOP
   }
 
   public enum ReefBranchSide {

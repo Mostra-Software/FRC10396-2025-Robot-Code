@@ -4,6 +4,8 @@
 
 package frc.robot.commands.drive;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,6 +17,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.TargetingSystem;
+import frc.robot.util.TargetingSystem.RobotState;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AutoAlign extends Command {
@@ -30,9 +34,10 @@ public class AutoAlign extends Command {
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
   private Drive drive;
-  private Pose2d closestReef = new Pose2d();
+  private Pose2d targetPose = new Pose2d();
   private Pose2d currPose = new Pose2d();
   private Pose2d delta = new Pose2d(99, 99, new Rotation2d(0));
+  private TargetingSystem targetingSystem;
 
   ProfiledPIDController angleController =
       new ProfiledPIDController(
@@ -44,8 +49,9 @@ public class AutoAlign extends Command {
   PIDController xController = new PIDController(0.25, 0, 0);
   PIDController yController = new PIDController(0.25, 0, 0);
 
-  public AutoAlign(Drive drive) {
+  public AutoAlign(Drive drive, TargetingSystem targetingSystem) {
     this.drive = drive;
+    this.targetingSystem = targetingSystem;
     addRequirements(drive);
   }
 
@@ -54,50 +60,56 @@ public class AutoAlign extends Command {
   public void initialize() {
     angleController.enableContinuousInput(-Math.PI, Math.PI);
     currPose = drive.getPose();
-    closestReef = drive.getClosestReefFace();
+    targetPose = targetingSystem.getNearestBranchSide();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currPose = drive.getPose();
-    closestReef = drive.getClosestReefFace();
+    currPose = targetingSystem.getRobotPose();
+    targetPose = targetingSystem.getNearestBranchSide();
 
     // Get linear velocity
     Translation2d linearVelocity =
         new Translation2d(
-            xController.calculate(currPose.getX(), closestReef.getX()),
-            yController.calculate(currPose.getY(), closestReef.getY()));
-
+            xController.calculate(currPose.getX(), targetPose.getX()),
+            yController.calculate(currPose.getY(), targetPose.getY()));
+    Logger.recordOutput("TargetingSystem/Auto Align Calculated Velocities", linearVelocity);
     // Calculate angular speed
     double omega =
         angleController.calculate(
-            drive.getRotation().getRadians(), closestReef.getRotation().getRadians());
+            drive.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
     // Convert to field relative speeds & send command
     ChassisSpeeds speeds =
         new ChassisSpeeds(
-            -linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-            -linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
             omega);
+    Logger.recordOutput("TargetingSystem/Auto Align Chassis Speeds", speeds);
+
     boolean isFlipped =
         DriverStation.getAlliance().isPresent()
             && DriverStation.getAlliance().get() == Alliance.Red;
+
     drive.runVelocity(
         ChassisSpeeds.fromFieldRelativeSpeeds(
             speeds,
-            isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
+            drive.getRotation()));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    drive.stop();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(delta.getX()) < 0.03
+    return (Math.abs(delta.getX()) < 0.03
         && Math.abs(delta.getY()) < 0.03
-        && Math.abs(delta.getRotation().getDegrees()) < 4;
+        && Math.abs(delta.getRotation().getDegrees()) < 4)
+        || targetingSystem.getRobotState() == RobotState.MANUAL_TELEOP;
   }
 }

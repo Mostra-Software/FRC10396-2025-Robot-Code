@@ -283,21 +283,13 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
-  public Pose2d getClosestReefFace() {
-    int faceIndex = targetingSystem.getNearestReefFace();
-    if (faceIndex != -1) {
-      return AllianceFlipUtil.apply(
-          Reef.centerFaces[faceIndex].plus(
-              new Transform2d(new Translation2d(0.5, 0), Rotation2d.fromDegrees(180))));
-    } else return new Pose2d();
-  }
+  
 
   @AutoLogOutput(key = "TargetingSystem/AutoSnapPose")
   private Pose2d getAutoSnapPose() {
-    Pose2d currPose = getPose();
     Pose2d closestHP = targetingSystem.getHPZone();
     if (closestHP == null) {
-      return getClosestReefFace();
+      return targetingSystem.getClosestReefFace();
     } else return closestHP;
   }
 
@@ -369,8 +361,8 @@ public class Drive extends SubsystemBase {
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    //poseEstimator.addVisionMeasurement(
+      //  visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
 
   /** Returns the maximum linear speed in meters per sec. */
