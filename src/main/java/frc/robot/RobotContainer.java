@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.climb.SetClimbPercent;
+import frc.robot.commands.drive.AutoAlign;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.elevator.AutoScore;
 import frc.robot.commands.elevator.HomeElevator;
@@ -265,10 +266,11 @@ public class RobotContainer {
                                 drive)
                                 .ignoringDisable(true));
 
-        driverJoy.y().onTrue(Commands.runOnce(() -> drive.setPoseFacingReef()).ignoringDisable(true));
-
-        // Elevator Openloop Up
-        operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
+    // driverJoy.y().onTrue(Commands.runOnce(() ->
+    // drive.setPoseFacingReef()).ignoringDisable(true));
+    driverJoy.y().whileTrue(new AutoAlign(drive));
+    // Elevator Openloop Up
+    operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
 
         // Elevator Openloop Down
         operatorJoy.povDown().whileTrue(new SetElevatorPercent(-0.5, elevator));
@@ -306,10 +308,10 @@ public class RobotContainer {
         operatorJoy.L2().whileTrue(new Intake(outtake, driverJoy));
         operatorJoy.L2().whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
 
-        // Openloop Climb
-        operatorJoy.povRight().whileTrue(new SetClimbPercent(0.3, climb));
-        operatorJoy.povLeft().whileTrue(new SetClimbPercent(-0.3, climb));
-    }
+    // Openloop Climb
+    operatorJoy.povRight().whileTrue(new SetClimbPercent(0.75, climb));
+    operatorJoy.povLeft().whileTrue(new SetClimbPercent(-0.75, climb));
+  }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

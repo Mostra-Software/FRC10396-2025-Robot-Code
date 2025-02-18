@@ -21,7 +21,7 @@ public class ElevatorConstants {
   public static final int masterCanId = 41;
   public static final int slaveCanId = 42;
   public static final double motorReduction = (50. / 46.) * 9.;
-  public static final int currentLimit = 40;
+  public static final int currentLimit = 80;
 
   public static final double homeSequenceSlowPoint = 15;
 
@@ -37,7 +37,7 @@ public class ElevatorConstants {
   public static final double PIDTolerance = 0.100;
   public static final int maxVelocity = 5000;
   public static final int maxAcceleration = 12000;
-  public static final double preHomingPosition = 0.015;
+  public static final double preHomingPosition = 0.02;
   public static final int homingCurrent = 30;
 
   public static final double kCarriageMass = 10;

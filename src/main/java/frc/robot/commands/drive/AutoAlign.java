@@ -41,10 +41,11 @@ public class AutoAlign extends Command {
           ANGLE_KD,
           new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
 
-  PIDController xController = new PIDController(0, 0, 0);
-  PIDController yController = new PIDController(0, 0, 0);
+  PIDController xController = new PIDController(0.25, 0, 0);
+  PIDController yController = new PIDController(0.25, 0, 0);
 
   public AutoAlign(Drive drive) {
+    this.drive = drive;
     addRequirements(drive);
   }
 
@@ -76,8 +77,8 @@ public class AutoAlign extends Command {
     // Convert to field relative speeds & send command
     ChassisSpeeds speeds =
         new ChassisSpeeds(
-            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+            -linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+            -linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
             omega);
     boolean isFlipped =
         DriverStation.getAlliance().isPresent()
@@ -97,6 +98,6 @@ public class AutoAlign extends Command {
   public boolean isFinished() {
     return Math.abs(delta.getX()) < 0.03
         && Math.abs(delta.getY()) < 0.03
-        && Math.abs(delta.getRotation().getDegrees()) < 2;
+        && Math.abs(delta.getRotation().getDegrees()) < 4;
   }
 }

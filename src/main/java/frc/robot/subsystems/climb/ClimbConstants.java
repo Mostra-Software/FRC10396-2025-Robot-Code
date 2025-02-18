@@ -18,7 +18,7 @@ public class ClimbConstants {
   public static final int masterCanId = 7;
   public static final int slaveCanId = 8;
   public static final double motorReduction = (50. / 46.) * 9.;
-  public static final int currentLimit = 40;
+  public static final int currentLimit = 80;
 
   public static final double forwardSoftLimit = 0;
   public static final double reverseSoftLimit = 0;
