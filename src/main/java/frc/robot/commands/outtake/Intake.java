@@ -29,6 +29,7 @@ public class Intake extends SequentialCommandGroup {
         new RunCommand(() -> outtake.runPercent(0.5), outtake).until(outtake::hasGP),
         new InstantCommand(() -> outtake.runPercent(0), outtake),
         new InstantCommand(() -> Leds.getInstance().intaking = false),
-        new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0.4)).withTimeout(0.4));
+        new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0.4)).withTimeout(0.4),
+        new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0.0)));
   }
 }
