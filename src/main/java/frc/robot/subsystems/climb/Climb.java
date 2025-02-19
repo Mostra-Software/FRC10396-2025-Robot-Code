@@ -39,6 +39,6 @@ public class Climb extends SubsystemBase {
   }
 
   public double getCurrent() {
-    return inputs.currentAmps;
+    return inputs.currentAmpsMaster;
   }
 }

@@ -18,8 +18,17 @@ import org.littletonrobotics.junction.AutoLog;
 public interface OuttakeIO {
   @AutoLog
   public static class OuttakeIOInputs {
-    public double appliedVolts = 0.0;
-    public double currentAmps = 0.0;
+    public double appliedVoltsOuttake = 0.0;
+    public double currentAmpsOuttake = 0.0;
+    public double deviceTempOuttake = 0.0;
+
+    public double appliedVoltsdeAlg = 0.0;
+    public double currentAmpsdeAlg = 0.0;
+    public double deviceTempdeAlg = 0.0;
+
+    public double setpoint = 0.0;
+    public boolean isAtSetpoint = false;
+
     public double distance_mm = 0.0;
     public boolean hasGP = false;
   }
@@ -31,4 +40,6 @@ public interface OuttakeIO {
   public default void setVoltage(double volts) {}
 
   public default void resetEncoder() {}
+
+  public default void setAngle(double angle) {}
 }

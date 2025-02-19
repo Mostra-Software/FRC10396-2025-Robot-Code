@@ -60,7 +60,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getCurrent() {
-    return inputs.currentAmps;
+    return inputs.currentAmpsMaster;
   }
 
   public void setHome(boolean isHome) {

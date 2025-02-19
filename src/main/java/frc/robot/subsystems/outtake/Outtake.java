@@ -41,4 +41,16 @@ public class Outtake extends SubsystemBase {
   public boolean hasGP() {
     return inputs.hasGP;
   }
+
+  public void setAngle(double angle) {
+    io.setAngle((angle));
+  }
+
+  public void resetEncoder() {
+    io.resetEncoder();
+  }
+
+  public boolean isAtSetpoint() {
+    return inputs.isAtSetpoint;
+  }
 }

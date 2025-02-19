@@ -100,8 +100,8 @@ public class ClimbIOSim implements ClimbIO {
 
     inputs.positionDeg = simFlex.getPosition();
     inputs.velocityDegPerSec = simFlex.getVelocity();
-    inputs.appliedVolts = simFlex.getBusVoltage();
-    inputs.currentAmps = simFlex.getMotorCurrent();
+    inputs.appliedVoltsMaster = simFlex.getBusVoltage();
+    inputs.currentAmpsMaster = simFlex.getMotorCurrent();
     inputs.setpoint = setpoint;
 
     ifOk(

@@ -66,6 +66,7 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
@@ -184,5 +185,14 @@ public class Vision extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
+  }
+
+  public boolean[] getCameraDisconnected() {
+    boolean[] connected = {true, true};
+
+    connected[0] = inputs[0].connected;
+    connected[1] = inputs[1].connected;
+
+    return connected;
   }
 }

@@ -20,8 +20,12 @@ public interface ClimbIO {
   public static class ClimbIOInputs {
     public double positionDeg = 0.0;
     public double velocityDegPerSec = 0.0;
-    public double appliedVolts = 0.0;
-    public double currentAmps = 0.0;
+    public double appliedVoltsMaster = 0.0;
+    public double currentAmpsMaster = 0.0;
+    public double deviceTempMaster = 0.0;
+    public double appliedVoltsSlave = 0.0;
+    public double currentAmpsSlave = 0.0;
+    public double deviceTempSlave = 0.0;
     public double setpoint = 0.0;
     public boolean isAtSetpoint = false;
   }

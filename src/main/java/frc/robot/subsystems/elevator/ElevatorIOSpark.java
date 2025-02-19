@@ -123,16 +123,16 @@ public class ElevatorIOSpark implements ElevatorIO {
     ifOk(
         masterMotor,
         new DoubleSupplier[] {masterMotor::getAppliedOutput, masterMotor::getBusVoltage},
-        (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(masterMotor, masterMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
+        (values) -> inputs.appliedVoltsMaster = values[0] * values[1]);
+    ifOk(masterMotor, masterMotor::getOutputCurrent, (value) -> inputs.currentAmpsMaster = value);
+    ifOk(masterMotor, masterMotor::getMotorTemperature, (value) -> inputs.deviceTempMaster = value);
 
-    ifOk(slaveMotor, masterEncoder::getPosition, (value) -> inputs.positionMeters = value);
-    ifOk(slaveMotor, masterEncoder::getVelocity, (value) -> inputs.velocityMetersPerSec = value);
     ifOk(
         slaveMotor,
         new DoubleSupplier[] {slaveMotor::getAppliedOutput, slaveMotor::getBusVoltage},
-        (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(slaveMotor, slaveMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
+        (values) -> inputs.appliedVoltsSlave = values[0] * values[1]);
+    ifOk(slaveMotor, slaveMotor::getOutputCurrent, (value) -> inputs.currentAmpsSlave = value);
+    ifOk(slaveMotor, slaveMotor::getMotorTemperature, (value) -> inputs.deviceTempSlave = value);
 
     inputs.isHome = isHome;
     inputs.setpoint = setpoint;

@@ -110,8 +110,8 @@ public class ElevatorIOSim implements ElevatorIO {
 
     inputs.positionMeters = simFlex.getPosition();
     inputs.velocityMetersPerSec = simFlex.getVelocity();
-    inputs.appliedVolts = simFlex.getBusVoltage();
-    inputs.currentAmps = simFlex.getMotorCurrent();
+    inputs.appliedVoltsMaster = simFlex.getBusVoltage();
+    inputs.currentAmpsMaster = simFlex.getMotorCurrent();
     inputs.isHome = isHome;
     inputs.setpoint = setpoint;
 

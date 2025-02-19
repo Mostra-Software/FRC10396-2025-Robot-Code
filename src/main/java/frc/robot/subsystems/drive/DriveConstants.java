@@ -103,7 +103,7 @@ public class DriveConstants {
   public static final double robotMassKg = 74.088;
   public static final double robotMOI = 6.883;
   public static final double wheelCOF = 1.2;
-public static final double driverDeadband = 0.06;
+  public static final double driverDeadband = 0.06;
 
   /* INOP
   public static final RobotConfig ppConfig =

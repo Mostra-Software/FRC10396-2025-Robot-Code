@@ -4,8 +4,6 @@
 
 package frc.robot.commands.drive;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.TargetingSystem;
 import frc.robot.util.TargetingSystem.RobotState;
+import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AutoAlign extends Command {
@@ -92,10 +91,7 @@ public class AutoAlign extends Command {
         DriverStation.getAlliance().isPresent()
             && DriverStation.getAlliance().get() == Alliance.Red;
 
-    drive.runVelocity(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            speeds,
-            drive.getRotation()));
+    drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
   }
 
   // Called once the command ends or is interrupted.
@@ -108,8 +104,8 @@ public class AutoAlign extends Command {
   @Override
   public boolean isFinished() {
     return (Math.abs(delta.getX()) < 0.03
-        && Math.abs(delta.getY()) < 0.03
-        && Math.abs(delta.getRotation().getDegrees()) < 4)
+            && Math.abs(delta.getY()) < 0.03
+            && Math.abs(delta.getRotation().getDegrees()) < 4)
         || targetingSystem.getRobotState() == RobotState.MANUAL_TELEOP;
   }
 }

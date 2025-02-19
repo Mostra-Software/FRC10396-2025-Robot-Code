@@ -12,9 +12,10 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Measure;
 import frc.robot.FieldConstants.*;
+import frc.robot.subsystems.leds.Leds;
+
 import java.util.Arrays;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -67,7 +68,7 @@ public class TargetingSystem {
     return robotState;
   }
 
-  public boolean isAutoAssistedTeleop(){
+  public boolean isAutoAssistedTeleop() {
     return robotState == RobotState.AUTO_ASSISTED_TELEOP;
   }
 
@@ -83,6 +84,14 @@ public class TargetingSystem {
   public void setBranchSide(ReefBranchSide side) {
     Logger.recordOutput("TargetingSystem/Branch Side", side);
     reefBranchSide = side;
+    if(side == ReefBranchSide.LEFT){
+      Leds.getInstance().leftReefSelected = true;
+      Leds.getInstance().rightReefSelected = false;
+      
+    }else{
+      Leds.getInstance().leftReefSelected = false;
+      Leds.getInstance().rightReefSelected = true;
+    }
   }
 
   public ReefBranchSide getBranchSide() {
@@ -180,8 +189,7 @@ public class TargetingSystem {
   public Pose2d getClosestReefFace() {
     int faceIndex = getNearestReefFace();
     if (faceIndex != -1) {
-      return AllianceFlipUtil.apply(
-          Reef.centerFaces[faceIndex].plus(robotBranchScoringOffset));
+      return AllianceFlipUtil.apply(Reef.centerFaces[faceIndex].plus(robotBranchScoringOffset));
     } else return new Pose2d();
   }
 

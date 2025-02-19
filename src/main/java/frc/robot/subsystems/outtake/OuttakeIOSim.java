@@ -33,8 +33,8 @@ public class OuttakeIOSim implements OuttakeIO {
     sim.setInputVoltage(appliedVolts);
     sim.update(0.02);
 
-    inputs.appliedVolts = appliedVolts;
-    inputs.currentAmps = sim.getCurrentDrawAmps();
+    inputs.appliedVoltsOuttake = appliedVolts;
+    inputs.currentAmpsOuttake = sim.getCurrentDrawAmps();
   }
 
   @Override
