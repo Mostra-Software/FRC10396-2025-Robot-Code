@@ -124,12 +124,14 @@ public class ClimbIOSpark implements ClimbIO {
         new DoubleSupplier[] {masterMotor::getAppliedOutput, masterMotor::getBusVoltage},
         (values) -> inputs.appliedVoltsMaster = values[0] * values[1]);
     ifOk(masterMotor, masterMotor::getOutputCurrent, (value) -> inputs.currentAmpsMaster = value);
+    ifOk(masterMotor, masterMotor::getMotorTemperature, (value) -> inputs.deviceTempMaster = value);
 
     ifOk(
         slaveMotor,
         new DoubleSupplier[] {slaveMotor::getAppliedOutput, slaveMotor::getBusVoltage},
         (values) -> inputs.appliedVoltsSlave = values[0] * values[1]);
     ifOk(slaveMotor, slaveMotor::getOutputCurrent, (value) -> inputs.currentAmpsSlave = value);
+    ifOk(slaveMotor, slaveMotor::getMotorTemperature, (value) -> inputs.deviceTempSlave = value);
 
     inputs.setpoint = setpoint;
 
