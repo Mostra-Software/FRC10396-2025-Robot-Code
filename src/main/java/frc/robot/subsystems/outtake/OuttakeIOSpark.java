@@ -27,7 +27,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import java.util.function.DoubleSupplier;
 
 public class OuttakeIOSpark implements OuttakeIO {
-  private SparkFlex outtakeMotor = new SparkFlex(outtakeCanId, MotorType.kBrushed);
+  private SparkFlex outtakeMotor = new SparkFlex(outtakeCanId, MotorType.kBrushless);
   private LaserCan lc = new LaserCan(SensorID);
 
   public OuttakeIOSpark() {
