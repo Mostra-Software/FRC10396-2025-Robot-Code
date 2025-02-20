@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.Measure;
 import frc.robot.FieldConstants.*;
 import frc.robot.subsystems.leds.Leds;
-
 import java.util.Arrays;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -84,11 +83,11 @@ public class TargetingSystem {
   public void setBranchSide(ReefBranchSide side) {
     Logger.recordOutput("TargetingSystem/Branch Side", side);
     reefBranchSide = side;
-    if(side == ReefBranchSide.LEFT){
+    if (side == ReefBranchSide.LEFT) {
       Leds.getInstance().leftReefSelected = true;
       Leds.getInstance().rightReefSelected = false;
-      
-    }else{
+
+    } else {
       Leds.getInstance().leftReefSelected = false;
       Leds.getInstance().rightReefSelected = true;
     }

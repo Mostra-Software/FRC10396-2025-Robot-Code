@@ -18,7 +18,7 @@ public class OuttakeConstants {
   public static final int SensorID = 61;
   public static final int outtakeCanId = 59;
   public static final int deAlgCanId = 58;
-  public static final int currentLimit = 40;
+  public static final int currentLimit = 80;
 
   // PID Constants
   public static final double positionP = 0.0;

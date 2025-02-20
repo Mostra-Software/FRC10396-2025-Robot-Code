@@ -38,7 +38,6 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.elevator.AutoScore;
 import frc.robot.commands.elevator.HomeElevator;
 import frc.robot.commands.elevator.SetElevatorPercent;
-import frc.robot.commands.outtake.DeAlg;
 import frc.robot.commands.outtake.Intake;
 import frc.robot.commands.outtake.RunOuttake;
 import frc.robot.commands.outtake.Shoot;
@@ -320,10 +319,10 @@ public class RobotContainer {
     operatorJoy.povRight().whileTrue(new SetClimbPercent(0.75, climb));
     operatorJoy.povLeft().whileTrue(new SetClimbPercent(-0.75, climb));
 
-    //deAlg disabled until assembly
-    //operatorJoy.R1().whileTrue(new DeAlg(outtake));
+    // deAlg disabled until assembly
+    // operatorJoy.R1().whileTrue(new DeAlg(outtake));
 
-    //Manuel Feed for Outtake
+    // Manuel Feed for Outtake
     operatorJoy.R1().whileTrue(new RunOuttake(true, 0.15, outtake));
   }
 
