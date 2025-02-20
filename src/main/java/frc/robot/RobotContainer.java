@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -213,7 +214,8 @@ public class RobotContainer {
 
     new Trigger(targetingSystem::shouldRunIntake)
         .and(targetingSystem::isAutoAssistedTeleop)
-        .onTrue(new Intake(outtake, driverJoy));
+        .whileTrue(new Intake(outtake, driverJoy))
+        .onFalse(getStopIntakeCommand());
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -304,16 +306,10 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4)));
 
     // Outtake Shoot
-    operatorJoy
-        .R2()
-        .whileTrue(new Shoot(outtake))
-        .whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
+    operatorJoy.R2().whileTrue(new Shoot(outtake)).onFalse(getStopIntakeCommand());
 
     // Outtake Intake
-    operatorJoy
-        .L2()
-        .whileTrue(new Intake(outtake, driverJoy))
-        .whileFalse(new InstantCommand(() -> outtake.runPercent(0)));
+    operatorJoy.L2().whileTrue(new Intake(outtake, driverJoy)).onFalse(getStopIntakeCommand());
 
     // Openloop Climb
     operatorJoy.povRight().whileTrue(new SetClimbPercent(0.75, climb));
@@ -328,6 +324,13 @@ public class RobotContainer {
 
   public TargetingSystem getTargetingSystem() {
     return targetingSystem;
+  }
+
+  public ParallelCommandGroup getStopIntakeCommand() {
+    return new ParallelCommandGroup(
+        new InstantCommand(() -> outtake.runPercent(0)),
+        new InstantCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 0)),
+        new InstantCommand(() -> Leds.getInstance().intaking = false));
   }
 
   /**
