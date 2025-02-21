@@ -60,10 +60,10 @@ public class Leds extends VirtualSubsystem {
 
   // Constants
   private static final int minLoopCycleCount = 10;
-  private static final int ledFullLength = 100;
-  private static final int ledLeftLength = 40;
+  private static final int ledFullLength = 96;
+  private static final int ledLeftLength = 36;
   private static final int ledMiddleLenght = 20;
-  private static final int ledRightLength = 40;
+  private static final int ledRightLength = 36;
   private static final double strobeDuration = 0.1;
   private static final double breathDuration = 1.0;
   private static final double rainbowCycleLength = 25.0;
@@ -77,7 +77,7 @@ public class Leds extends VirtualSubsystem {
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
   private Leds() {
-    leds = new AddressableLED(0);
+    leds = new AddressableLED(9);
     buffer = new AddressableLEDBuffer(ledFullLength);
     leds.setLength(ledFullLength);
     leds.setData(buffer);

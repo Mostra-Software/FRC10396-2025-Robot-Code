@@ -99,9 +99,9 @@ public class Drive extends SubsystemBase {
     modules[2] = new Module(blModuleIO, 2);
     modules[3] = new Module(brModuleIO, 3);
 
-    velMultiplier.put(0.144, 0.85);
-    velMultiplier.put(0.323, 0.7);
-    velMultiplier.put(0.612, 0.55);
+    velMultiplier.put(0.144, 0.3);
+    velMultiplier.put(0.323, 0.2);
+    velMultiplier.put(0.612, 0.15);
 
     // Usage reporting for swerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);

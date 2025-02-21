@@ -38,7 +38,7 @@ public class ElevatorConstants {
   public static final int maxVelocity = 5000;
   public static final int maxAcceleration = 12000;
   public static final double preHomingPosition = 0.09;
-  public static final int homingCurrent = 30;
+  public static final int homingCurrent = 40;
 
   public static final double kCarriageMass = 10;
   public static final double kMinElevatorHeightMeters = 0;

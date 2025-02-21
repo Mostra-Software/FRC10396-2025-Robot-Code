@@ -27,9 +27,9 @@ public class TargetingSystem {
   private ReefBranchLevel targetBranchLevel = ReefBranchLevel.L2;
   private ReefBranchSide reefBranchSide = ReefBranchSide.RIGHT;
   private Transform2d robotBranchScoringOffset =
-      new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
-  private Transform2d robotHPOffset =
       new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(180));
+  private Transform2d robotHPOffset =
+      new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
   private Boolean hasGP = false;
   private double elevHeight = 0.0;
   private Pose2d robotPose = new Pose2d();

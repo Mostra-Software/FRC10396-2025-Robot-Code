@@ -212,10 +212,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new Trigger(targetingSystem::shouldRunIntake)
-        .and(targetingSystem::isAutoAssistedTeleop)
-        .whileTrue(new Intake(outtake, driverJoy))
-        .onFalse(getStopIntakeCommand());
+    /*new Trigger(targetingSystem::shouldRunIntake)
+    .and(targetingSystem::isAutoAssistedTeleop)
+    .whileTrue(new Intake(outtake, driverJoy))
+    .onFalse(getStopIntakeCommand());*/
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
