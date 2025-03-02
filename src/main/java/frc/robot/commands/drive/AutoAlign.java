@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.TargetingSystem;
-import frc.robot.util.TargetingSystem.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -24,7 +23,7 @@ public class AutoAlign extends Command {
 
   private static final double DEADBAND = 0.1;
   private static final double ANGLE_KP = 5.0;
-  private static final double ANGLE_KD = 0.4;
+  private static final double ANGLE_KD = 0.0;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
   private static final double FF_START_DELAY = 2.0; // Secs
@@ -68,6 +67,9 @@ public class AutoAlign extends Command {
     currPose = targetingSystem.getRobotPose();
     targetPose = targetingSystem.getNearestBranchSide();
 
+    Logger.recordOutput("TargetingSystem/CurrPoseRot", currPose.getX());
+    Logger.recordOutput("TargetingSystem/SetpointPoseRot", targetPose.getRotation());
+
     // Get linear velocity
     Translation2d linearVelocity =
         new Translation2d(
@@ -104,8 +106,7 @@ public class AutoAlign extends Command {
   @Override
   public boolean isFinished() {
     return (Math.abs(delta.getX()) < 0.03
-            && Math.abs(delta.getY()) < 0.03
-            && Math.abs(delta.getRotation().getDegrees()) < 4)
-        || targetingSystem.getRobotState() == RobotState.MANUAL_TELEOP;
+        && Math.abs(delta.getY()) < 0.03
+        && Math.abs(delta.getRotation().getDegrees()) < 4);
   }
 }

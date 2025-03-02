@@ -24,7 +24,7 @@ public class Shoot extends Command {
 
   @Override
   public void execute() {
-    outtake.runPercent(0.2);
+    outtake.runPercent(0.25);
   }
 
   @Override

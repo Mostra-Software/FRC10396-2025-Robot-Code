@@ -28,9 +28,12 @@ public interface OuttakeIO {
 
     public double setpoint = 0.0;
     public boolean isAtSetpoint = false;
+    public double angle = 0.0;
 
     public double distance_mm = 0.0;
     public boolean hasGP = false;
+
+    public boolean isHome = true;
   }
 
   /** Update the set of loggable inputs. */
@@ -42,4 +45,6 @@ public interface OuttakeIO {
   public default void resetEncoder() {}
 
   public default void setAngle(double angle) {}
+
+  public default void setHome(boolean isHome) {}
 }

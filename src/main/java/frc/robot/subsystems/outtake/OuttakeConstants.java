@@ -21,7 +21,7 @@ public class OuttakeConstants {
   public static final int currentLimit = 80;
 
   // PID Constants
-  public static final double positionP = 0.0;
+  public static final double positionP = 0.05;
   public static final double positionI = 0.0;
   public static final double positionD = 0.0;
 
@@ -29,4 +29,6 @@ public class OuttakeConstants {
   public static final int reverseSoftLimit = 0;
 
   public static final double SensorTriggerDistance = 70;
+
+  public static final double PIDtolerance = 0.1;
 }

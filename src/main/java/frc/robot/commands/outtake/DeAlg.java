@@ -11,9 +11,11 @@ import frc.robot.subsystems.outtake.Outtake;
 public class DeAlg extends Command {
 
   private Outtake outtake;
+  private double setpoint;
 
-  public DeAlg(Outtake outtake) {
+  public DeAlg(Outtake outtake, double degrees) {
     this.outtake = outtake;
+    this.setpoint = degrees;
     addRequirements(outtake);
   }
 
@@ -24,19 +26,17 @@ public class DeAlg extends Command {
 
   @Override
   public void execute() {
-    outtake.setAngle(90);
-    outtake.runPercent(0.35);
+    outtake.setAngle(setpoint);
   }
 
   @Override
   public void end(boolean interrupted) {
     Leds.getInstance().intaking = false;
     outtake.runPercent(0);
-    outtake.setAngle(0);
   }
 
   @Override
   public boolean isFinished() {
-    return false;
+    return outtake.isAtSetpoint();
   }
 }

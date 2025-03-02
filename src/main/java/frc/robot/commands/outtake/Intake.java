@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.outtake.Outtake;
+import frc.robot.util.TargetingSystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -20,18 +21,20 @@ public class Intake extends SequentialCommandGroup {
   private Outtake outtake;
   private CommandXboxController driver;
 
-  public Intake(Outtake outtake, CommandXboxController driver) {
+  public Intake(Outtake outtake, CommandXboxController driver, TargetingSystem targetingSystem) {
     this.outtake = outtake;
     this.driver = driver;
 
     addCommands(
         new InstantCommand(() -> Leds.getInstance().intaking = true),
         new RunCommand(() -> outtake.runPercent(0.2), outtake).until(outtake::hasGP),
+        new InstantCommand(() -> targetingSystem.setShouldKeepIntakeRunning(true)),
         new RunCommand(() -> outtake.runPercent(0.1), outtake).until(() -> !outtake.hasGP()),
         new RunCommand(() -> outtake.runPercent(-0.1), outtake).withTimeout(0.2),
         new InstantCommand(() -> outtake.runPercent(0), outtake),
         new InstantCommand(() -> Leds.getInstance().intaking = false),
         new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0.4)).withTimeout(0.4),
-        new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0.0)));
+        new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0.0)),
+        new InstantCommand(() -> targetingSystem.setShouldKeepIntakeRunning(false)));
   }
 }

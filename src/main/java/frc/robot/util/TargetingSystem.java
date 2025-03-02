@@ -34,6 +34,8 @@ public class TargetingSystem {
   private double elevHeight = 0.0;
   private Pose2d robotPose = new Pose2d();
   private RobotState robotState = RobotState.AUTO;
+  private boolean shouldKeepIntakeRunning = false;
+  private GP GPmode = GP.CORAL;
 
   public double getTargetBranchHeightMeters() {
     switch (targetBranchLevel) {
@@ -48,6 +50,18 @@ public class TargetingSystem {
       }
     }
     return 0;
+  }
+
+  public void setCoralMode(){
+    GPmode = GP.CORAL;
+  }
+
+  public void setAlgaeMode(){
+    GPmode = GP.ALGAE;
+  }
+
+  public boolean isCoralMode(){
+    return GPmode == GP.CORAL;
   }
 
   public void setRobotState(RobotState state) {
@@ -219,6 +233,15 @@ public class TargetingSystem {
     return isInHpZone(getRobotPose()) && !hasGP();
   }
 
+  public void setShouldKeepIntakeRunning(boolean keepRunning) {
+    shouldKeepIntakeRunning = keepRunning;
+  }
+
+  public boolean shouldKeepIntakeRunning() {
+    // hp zoneda intakelemeye basladiysa ve
+    return shouldKeepIntakeRunning;
+  }
+
   public enum ReefBranch {
     A,
     B,
@@ -243,6 +266,11 @@ public class TargetingSystem {
   public enum ReefBranchSide {
     RIGHT,
     LEFT
+  }
+
+  public enum GP {
+    CORAL,
+    ALGAE
   }
 
   public enum ReefBranchLevel {

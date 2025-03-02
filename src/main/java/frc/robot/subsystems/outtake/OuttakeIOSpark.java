@@ -43,6 +43,7 @@ public class OuttakeIOSpark implements OuttakeIO {
 
   private double setpoint = 0.0;
   private boolean isAtSetpoint = false;
+  private boolean isHome = true;
 
   public OuttakeIOSpark() {
 
@@ -55,13 +56,14 @@ public class OuttakeIOSpark implements OuttakeIO {
         .voltageCompensation(12.0);
 
     deAlg_config
-        .idleMode(IdleMode.kBrake)
+        .inverted(true)
+        .idleMode(IdleMode.kCoast)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(12.0);
 
     deAlg_config
         .encoder
-        .positionConversionFactor(1) // No unit
+        .positionConversionFactor(0.02528 * 360.) // No unit
         .velocityConversionFactor(1) // No unit
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
@@ -133,6 +135,13 @@ public class OuttakeIOSpark implements OuttakeIO {
 
     inputs.hasGP = (lc.getMeasurement().distance_mm <= SensorTriggerDistance);
     inputs.distance_mm = lc.getMeasurement().distance_mm;
+    inputs.isHome = isHome;
+    inputs.angle = deAlgEncoder.getPosition();
+
+    ifOk(
+        deAlgMotor,
+        deAlgEncoder::getPosition,
+        (value) -> inputs.isAtSetpoint = Math.abs(value - setpoint) < PIDtolerance);
   }
 
   @Override
@@ -146,12 +155,17 @@ public class OuttakeIOSpark implements OuttakeIO {
     closedLoopController.setReference(angle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
+  public void setArmPercent(double percent) {
+    deAlgMotor.setVoltage(percent * 12.0);
+  }
+
   @Override
   public void resetEncoder() {
     deAlgEncoder.setPosition(0);
   }
 
-  public boolean isAtSetpoint() {
-    return isAtSetpoint;
+  @Override
+  public void setHome(boolean home) {
+    isHome = home;
   }
 }

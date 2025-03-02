@@ -42,6 +42,10 @@ public class Outtake extends SubsystemBase {
     return inputs.hasGP;
   }
 
+  public void setArmPercent(double percent) {
+    io.setVoltage(percent);
+  }
+
   public void setAngle(double angle) {
     io.setAngle((angle));
   }
@@ -52,5 +56,13 @@ public class Outtake extends SubsystemBase {
 
   public boolean isAtSetpoint() {
     return inputs.isAtSetpoint;
+  }
+
+  public double getArmCurrent() {
+    return inputs.currentAmpsdeAlg;
+  }
+
+  public void setHome(boolean isHome) {
+    io.setHome(isHome);
   }
 }

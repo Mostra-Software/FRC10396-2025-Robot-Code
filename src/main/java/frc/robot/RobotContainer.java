@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -39,6 +40,7 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.elevator.AutoScore;
 import frc.robot.commands.elevator.HomeElevator;
 import frc.robot.commands.elevator.SetElevatorPercent;
+import frc.robot.commands.outtake.DeAlg;
 import frc.robot.commands.outtake.Intake;
 import frc.robot.commands.outtake.RunOuttake;
 import frc.robot.commands.outtake.Shoot;
@@ -95,7 +97,7 @@ public class RobotContainer {
 
   private final CommandPS5Controller operatorJoy = new CommandPS5Controller(2);
 
-  private Trigger autoScoreGetReady = driverJoy.leftTrigger(0.5);
+  private Trigger autoScoreGetReady = driverJoy.rightTrigger(0.5);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -192,11 +194,16 @@ public class RobotContainer {
 
     // Named Commands for Auton
     NamedCommands.registerCommand(
-        "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint));
+        "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint, targetingSystem, getDeAlgeCommand()));
+
+    NamedCommands.registerCommand(
+        "auto_align",
+        new AutoAlign(drive, targetingSystem).withTimeout(2)
+    );
 
     // Event Triggers for Auton
     new EventTrigger("run_intake_trigger")
-        .whileTrue(new Intake(outtake, driverJoy).withTimeout(1.5));
+        .whileTrue(new Intake(outtake, driverJoy, targetingSystem).withTimeout(1.5));
 
     new EventTrigger("run_shooter_trigger").whileTrue(new Shoot(outtake).withTimeout(1));
 
@@ -211,11 +218,19 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    /*
+         Trigger shouldKeepRunning =
+        new Trigger(targetingSystem::isAutoAssistedTeleop)
+            .and(targetingSystem::shouldKeepIntakeRunning);
+    Trigger shouldRunIntake =
+        new Trigger(targetingSystem::shouldRunIntake).and(targetingSystem::isAutoAssistedTeleop);
 
-    /*new Trigger(targetingSystem::shouldRunIntake)
-    .and(targetingSystem::isAutoAssistedTeleop)
-    .whileTrue(new Intake(outtake, driverJoy))
-    .onFalse(getStopIntakeCommand());*/
+    shouldRunIntake
+        .or(shouldKeepRunning)
+        .onTrue(new Intake(outtake, driverJoy, targetingSystem))
+        .onFalse(getStopIntakeCommand());
+
+     */
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -225,34 +240,33 @@ public class RobotContainer {
             () -> MathUtil.applyDeadband(-driverJoy.getLeftX(), DriveConstants.driverDeadband),
             () -> MathUtil.applyDeadband(-driverJoy.getRightX(), DriveConstants.driverDeadband)));
 
-    // Lock to 0° when A button is held
-    driverJoy
-        .a()
+    new Trigger(targetingSystem::isAutoAssistedTeleop)
         .whileTrue(
             DriveCommands.joystickDriveAutoSnap(
-                drive, () -> -driverJoy.getLeftY(), () -> -driverJoy.getLeftX()));
+                drive,
+                () -> MathUtil.applyDeadband(-driverJoy.getLeftY(), DriveConstants.driverDeadband),
+                () ->
+                    MathUtil.applyDeadband(-driverJoy.getLeftX(), DriveConstants.driverDeadband)));
 
     driverJoy
         .leftBumper()
-        .onTrue(
+        .whileTrue(
             new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
-                .andThen(new RunCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 1)))
-                .withTimeout(0.2)
-                .andThen(new InstantCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 0))));
+                .andThen(new AutoAlign(drive, targetingSystem)));
 
     driverJoy
         .rightBumper()
-        .onTrue(
+        .whileTrue(
             new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT))
-                .andThen(new RunCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 1)))
-                .withTimeout(0.2)
-                .andThen(new InstantCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 0))));
+                .andThen(new AutoAlign(drive, targetingSystem)));
 
     // Switch to X pattern when X button is pressed
     //
     driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    autoScoreGetReady.onTrue(new AutoScore(elevator, outtake, driverJoy.rightTrigger(.5)));
+    autoScoreGetReady
+        .onTrue(new AutoScore(elevator, outtake, driverJoy.leftTrigger(.5),targetingSystem, getDeAlgeCommand()))
+        .onFalse(new HomeElevator(elevator));
 
     // Reset gyro to 0° when B button is pressed
     driverJoy
@@ -267,7 +281,7 @@ public class RobotContainer {
 
     // driverJoy.y().onTrue(Commands.runOnce(() ->
     // drive.setPoseFacingReef()).ignoringDisable(true));
-    driverJoy.y().whileTrue(new AutoAlign(drive, targetingSystem));
+    driverJoy.y().whileTrue(getDeAlgeCommand()).onFalse(getDeAlgaeOnFalseCommand());
 
     // Elevator Openloop Up
     operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
@@ -288,28 +302,67 @@ public class RobotContainer {
     // L1
     operatorJoy
         .cross()
-        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L1)));
+        .onTrue(
+            new InstantCommand(() -> targetingSystem.setCoralMode())
+            .andThen(
+                Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L1)))            );
 
     // L2
     operatorJoy
         .square()
-        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2)));
+        .onTrue(
+            new InstantCommand(() -> targetingSystem.setCoralMode())
+            .andThen(
+                Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2)))            );
 
     // L3
     operatorJoy
         .circle()
-        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3)));
+        .onTrue(
+            new InstantCommand(() -> targetingSystem.setCoralMode())
+            .andThen(
+                Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3)))
+            );
+            
 
     // L4
     operatorJoy
         .triangle()
-        .onTrue(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4)));
+        .onTrue(
+            new InstantCommand(() -> targetingSystem.setCoralMode())
+            .andThen(
+                Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4)))       
+                     );
+    
+    
+    //L2 Coral
+    operatorJoy
+    .circle()
+    .doublePress()
+    .onTrue(
+        new InstantCommand(() -> targetingSystem.setAlgaeMode())
+        .andThen(
+            Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2)))
+        );
+
+     //L3 Coral
+    operatorJoy
+    .circle()
+    .doublePress()
+    .onTrue(
+        new InstantCommand(() -> targetingSystem.setAlgaeMode())
+        .andThen(
+            Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3)))
+        );
 
     // Outtake Shoot
     operatorJoy.R2().whileTrue(new Shoot(outtake)).onFalse(getStopIntakeCommand());
 
     // Outtake Intake
-    operatorJoy.L2().whileTrue(new Intake(outtake, driverJoy)).onFalse(getStopIntakeCommand());
+    operatorJoy
+        .L2()
+        .whileTrue(new Intake(outtake, driverJoy, targetingSystem))
+        .onFalse(getStopIntakeCommand());
 
     // Openloop Climb
     operatorJoy.povRight().whileTrue(new SetClimbPercent(0.75, climb));
@@ -328,7 +381,7 @@ public class RobotContainer {
 
   public ParallelCommandGroup getStopIntakeCommand() {
     return new ParallelCommandGroup(
-        new InstantCommand(() -> outtake.runPercent(0)),
+        new InstantCommand(() -> outtake.runPercent(0), outtake),
         new InstantCommand(() -> driverJoy.setRumble(RumbleType.kBothRumble, 0)),
         new InstantCommand(() -> Leds.getInstance().intaking = false));
   }
@@ -340,5 +393,14 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public SequentialCommandGroup getDeAlgeCommand() {
+    return new SequentialCommandGroup(
+        new DeAlg(outtake, 110), new RunCommand(() -> outtake.runPercent(0.3), outtake));
+  }
+
+  public SequentialCommandGroup getDeAlgaeOnFalseCommand() {
+    return new SequentialCommandGroup(new DeAlg(outtake, 3));
   }
 }
