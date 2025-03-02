@@ -4,13 +4,13 @@
 
 package frc.robot.commands.elevator;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.outtake.DeAlg;
 import frc.robot.commands.outtake.Shoot;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.util.TargetingSystem;
-
 import java.util.function.BooleanSupplier;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -18,22 +18,24 @@ import java.util.function.BooleanSupplier;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AutoScore extends SequentialCommandGroup {
 
-  public AutoScore(Elevator elevator, Outtake outtake, BooleanSupplier readyToScore, TargetingSystem targetingSystem, SequentialCommandGroup DeAlgae) {
-    if(targetingSystem.isCoralMode()){
+  public AutoScore(
+      Elevator elevator,
+      Outtake outtake,
+      BooleanSupplier readyToScore,
+      TargetingSystem targetingSystem) {
+    if (targetingSystem.isCoralMode()) {
       addCommands(
-        // new InstantCommand(() -> System.out.println("Auto Score Initiated")),
-        new AutoReefHeight(elevator, targetingSystem).until(readyToScore),
-        new Shoot(outtake).withTimeout(1.0),
-        // new InstantCommand(() -> System.out.println("Homing")),
-        new HomeElevator(elevator));
-    }
-    else{
+          // new InstantCommand(() -> System.out.println("Auto Score Initiated")),
+          new AutoReefHeight(elevator, targetingSystem).until(readyToScore),
+          new Shoot(outtake).withTimeout(1.0),
+          // new InstantCommand(() -> System.out.println("Homing")),
+          new HomeElevator(elevator));
+    } else {
       addCommands(
-        // new InstantCommand(() -> System.out.println("Auto Score Initiated")),
-        new AutoReefHeight(elevator, targetingSystem)
-        .alongWith(DeAlgae)
-      )
+          // new InstantCommand(() -> System.out.println("Auto Score Initiated")),
+          new AutoReefHeight(elevator, targetingSystem).withTimeout(1),
+          new DeAlg(outtake, 110),
+          new RunCommand(() -> outtake.runPercent(0.3), outtake));
     }
-    
   }
 }

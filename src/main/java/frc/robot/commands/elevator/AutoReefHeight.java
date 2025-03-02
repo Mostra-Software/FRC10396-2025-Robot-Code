@@ -37,15 +37,13 @@ public class AutoReefHeight extends Command {
       } else {
         targetHeight = ElevatorConstants.L1Height;
       }
-    }
-    else{
+    } else {
       if (targetLevel == 1) {
         targetHeight = ElevatorConstants.L2AlgaeHeight;
       } else if (targetLevel == 2) {
         targetHeight = ElevatorConstants.L3AlgaeHeight;
       }
     }
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -56,8 +54,7 @@ public class AutoReefHeight extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

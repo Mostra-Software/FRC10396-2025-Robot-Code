@@ -27,7 +27,8 @@ public class ElevatorConstants {
 
   public static final double forwardSoftLimit = 0.615;
   public static final double reverseSoftLimit = 0;
-  public static final double PD22t = Units.inchesToMeters(0.25) / Math.sin(Units.degreesToRadians(180. / 22.));
+  public static final double PD22t =
+      Units.inchesToMeters(0.25) / Math.sin(Units.degreesToRadians(180. / 22.));
 
   // Position PID Parameters
   public static final double positionP = 15;

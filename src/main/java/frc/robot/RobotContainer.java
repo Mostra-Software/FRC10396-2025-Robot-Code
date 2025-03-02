@@ -194,12 +194,10 @@ public class RobotContainer {
 
     // Named Commands for Auton
     NamedCommands.registerCommand(
-        "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint, targetingSystem, getDeAlgeCommand()));
+        "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint, targetingSystem));
 
     NamedCommands.registerCommand(
-        "auto_align",
-        new AutoAlign(drive, targetingSystem).withTimeout(2)
-    );
+        "auto_align", new AutoAlign(drive, targetingSystem).withTimeout(2));
 
     // Event Triggers for Auton
     new EventTrigger("run_intake_trigger")
@@ -265,8 +263,8 @@ public class RobotContainer {
     driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     autoScoreGetReady
-        .onTrue(new AutoScore(elevator, outtake, driverJoy.leftTrigger(.5),targetingSystem, getDeAlgeCommand()))
-        .onFalse(new HomeElevator(elevator));
+        .onTrue(new AutoScore(elevator, outtake, driverJoy.leftTrigger(.5), targetingSystem))
+        .onFalse(new HomeElevator(elevator).andThen(new RunOuttake(true, 0, outtake)));
 
     // Reset gyro to 0° when B button is pressed
     driverJoy
@@ -304,56 +302,44 @@ public class RobotContainer {
         .cross()
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
-            .andThen(
-                Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L1)))            );
+                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L1))));
 
     // L2
     operatorJoy
         .square()
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
-            .andThen(
-                Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2)))            );
+                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2))));
 
     // L3
     operatorJoy
         .circle()
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
-            .andThen(
-                Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3)))
-            );
-            
+                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3))));
 
     // L4
     operatorJoy
         .triangle()
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
-            .andThen(
-                Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4)))       
-                     );
-    
-    
-    //L2 Coral
-    operatorJoy
-    .circle()
-    .doublePress()
-    .onTrue(
-        new InstantCommand(() -> targetingSystem.setAlgaeMode())
-        .andThen(
-            Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2)))
-        );
+                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4))));
 
-     //L3 Coral
+    // L2 Coral
     operatorJoy
-    .circle()
-    .doublePress()
-    .onTrue(
-        new InstantCommand(() -> targetingSystem.setAlgaeMode())
-        .andThen(
-            Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3)))
-        );
+        .square()
+        .doublePress()
+        .onTrue(
+            Commands.runOnce(() -> targetingSystem.setAlgaeMode())
+                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2))));
+
+    // L3 Coral
+    operatorJoy
+        .circle()
+        .doublePress()
+        .onTrue(
+            Commands.runOnce(() -> targetingSystem.setAlgaeMode())
+                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3))));
 
     // Outtake Shoot
     operatorJoy.R2().whileTrue(new Shoot(outtake)).onFalse(getStopIntakeCommand());

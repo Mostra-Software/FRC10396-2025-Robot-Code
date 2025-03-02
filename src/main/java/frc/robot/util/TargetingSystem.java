@@ -52,16 +52,19 @@ public class TargetingSystem {
     return 0;
   }
 
-  public void setCoralMode(){
+  public void setCoralMode() {
+    Logger.recordOutput("TargetingSystem/RobotMode", GPmode);
     GPmode = GP.CORAL;
   }
 
-  public void setAlgaeMode(){
+  public void setAlgaeMode() {
+    Logger.recordOutput("TargetingSystem/RobotMode", GPmode);
     GPmode = GP.ALGAE;
   }
 
-  public boolean isCoralMode(){
-    return GPmode == GP.CORAL;
+  public boolean isCoralMode() {
+    Logger.recordOutput("TargetingSystem/isCoral", GPmode == GP.CORAL);
+    return (GPmode == GP.CORAL);
   }
 
   public void setRobotState(RobotState state) {
