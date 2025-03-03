@@ -11,18 +11,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "auto_align"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4_Shoot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "G_HP"
@@ -33,23 +21,11 @@
           "data": {
             "pathName": "HP_H_SCORE"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "auto_align"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4_Shoot"
-          }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": "FAR",
   "choreoAuto": false
 }

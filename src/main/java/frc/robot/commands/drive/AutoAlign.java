@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.TargetingSystem;
 import org.littletonrobotics.junction.Logger;
 
@@ -22,10 +23,10 @@ import org.littletonrobotics.junction.Logger;
 public class AutoAlign extends Command {
 
   private static final double DEADBAND = 0.1;
-  private static final double ANGLE_KP = 5.0;
+  private static final LoggedTunableNumber ANGLE_KP = new LoggedTunableNumber("Auto Align/Rot P");
   private static final double ANGLE_KD = 0.0;
-  private static final double ANGLE_MAX_VELOCITY = 8.0;
-  private static final double ANGLE_MAX_ACCELERATION = 20.0;
+  private static final double ANGLE_MAX_VELOCITY = 20.0;
+  private static final double ANGLE_MAX_ACCELERATION = 40.0;
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
@@ -37,9 +38,13 @@ public class AutoAlign extends Command {
   private Pose2d delta = new Pose2d(99, 99, new Rotation2d(0));
   private TargetingSystem targetingSystem;
 
+  static {
+    ANGLE_KP.initDefault(2.3);
+  }
+
   ProfiledPIDController angleController =
       new ProfiledPIDController(
-          ANGLE_KP,
+          ANGLE_KP.get(),
           0.0,
           ANGLE_KD,
           new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
@@ -64,6 +69,8 @@ public class AutoAlign extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    angleController.setP(ANGLE_KP.get());
+
     currPose = targetingSystem.getRobotPose();
     targetPose = targetingSystem.getNearestBranchSide();
 

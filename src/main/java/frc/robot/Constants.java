@@ -36,6 +36,7 @@ public final class Constants {
   }
 
   public static boolean disableHAL = false;
+  public static boolean tuningMode = true;
 
   public static void disableHAL() {
     disableHAL = true;

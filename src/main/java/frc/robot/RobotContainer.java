@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.climb.SetClimbPercent;
 import frc.robot.commands.drive.AutoAlign;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.elevator.AutoScore;
@@ -44,10 +43,6 @@ import frc.robot.commands.outtake.DeAlg;
 import frc.robot.commands.outtake.Intake;
 import frc.robot.commands.outtake.RunOuttake;
 import frc.robot.commands.outtake.Shoot;
-import frc.robot.subsystems.climb.Climb;
-import frc.robot.subsystems.climb.ClimbIO;
-import frc.robot.subsystems.climb.ClimbIOSim;
-import frc.robot.subsystems.climb.ClimbIOSpark;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
@@ -87,7 +82,6 @@ public class RobotContainer {
   private final Drive drive;
   private final Elevator elevator;
   private final Outtake outtake;
-  private final Climb climb;
   private final TargetingSystem targetingSystem;
   private final Leds leds = Leds.getInstance();
   private final Vision vision;
@@ -97,7 +91,7 @@ public class RobotContainer {
 
   private final CommandPS5Controller operatorJoy = new CommandPS5Controller(2);
 
-  private Trigger autoScoreGetReady = driverJoy.rightTrigger(0.5);
+  private Trigger autoScoreGetReady = driverJoy.leftTrigger(0.5);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -120,7 +114,6 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIOSpark(), targetingSystem);
         outtake = new Outtake(new OuttakeIOSpark(), targetingSystem);
-        climb = new Climb(new ClimbIOSpark());
 
         vision =
             new Vision(
@@ -144,7 +137,6 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIOSim(), targetingSystem);
         outtake = new Outtake(new OuttakeIOSim(), targetingSystem);
-        climb = new Climb(new ClimbIOSim());
 
         vision =
             new Vision(
@@ -167,7 +159,6 @@ public class RobotContainer {
 
         elevator = new Elevator(new ElevatorIO() {}, targetingSystem);
         outtake = new Outtake(new OuttakeIO() {}, targetingSystem);
-        climb = new Climb(new ClimbIO() {});
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
@@ -263,7 +254,7 @@ public class RobotContainer {
     driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     autoScoreGetReady
-        .onTrue(new AutoScore(elevator, outtake, driverJoy.leftTrigger(.5), targetingSystem))
+        .onTrue(new AutoScore(elevator, outtake, driverJoy.rightTrigger(.5), targetingSystem))
         .onFalse(new HomeElevator(elevator).andThen(new RunOuttake(true, 0, outtake)));
 
     // Reset gyro to 0° when B button is pressed
@@ -349,10 +340,6 @@ public class RobotContainer {
         .L2()
         .whileTrue(new Intake(outtake, driverJoy, targetingSystem))
         .onFalse(getStopIntakeCommand());
-
-    // Openloop Climb
-    operatorJoy.povRight().whileTrue(new SetClimbPercent(0.75, climb));
-    operatorJoy.povLeft().whileTrue(new SetClimbPercent(-0.75, climb));
 
     // deAlg disabled until assembly
     // operatorJoy.R1().whileTrue(new DeAlg(outtake));

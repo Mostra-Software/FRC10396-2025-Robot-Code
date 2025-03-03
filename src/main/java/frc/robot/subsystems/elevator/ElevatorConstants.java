@@ -45,11 +45,11 @@ public class ElevatorConstants {
   public static final double kMaxElevatorHeightMeters = 2;
 
   public static final double L1Height = 0.0;
-  public static final double L2Height = 0.144;
-  public static final double L3Height = 0.323;
+  public static final double L2Height = 0.118;
+  public static final double L3Height = 0.297;
   public static final double L4Height = 0.612;
   public static final double slowDownThreshold = 0;
   public static final double L2CoralHeight = 0;
-  public static final double L2AlgaeHeight = 0.144;
-  public static final double L3AlgaeHeight = 0.323;
+  public static final double L2AlgaeHeight = 0.0;
+  public static final double L3AlgaeHeight = 0.19;
 }

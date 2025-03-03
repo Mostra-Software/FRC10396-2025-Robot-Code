@@ -35,7 +35,7 @@ public class TargetingSystem {
   private Pose2d robotPose = new Pose2d();
   private RobotState robotState = RobotState.AUTO;
   private boolean shouldKeepIntakeRunning = false;
-  private GP GPmode = GP.CORAL;
+  private GPMode GPmode = GPMode.CORAL;
 
   public double getTargetBranchHeightMeters() {
     switch (targetBranchLevel) {
@@ -53,18 +53,18 @@ public class TargetingSystem {
   }
 
   public void setCoralMode() {
+    GPmode = GPMode.CORAL;
     Logger.recordOutput("TargetingSystem/RobotMode", GPmode);
-    GPmode = GP.CORAL;
   }
 
   public void setAlgaeMode() {
+    GPmode = GPMode.ALGAE;
     Logger.recordOutput("TargetingSystem/RobotMode", GPmode);
-    GPmode = GP.ALGAE;
   }
 
   public boolean isCoralMode() {
-    Logger.recordOutput("TargetingSystem/isCoral", GPmode == GP.CORAL);
-    return (GPmode == GP.CORAL);
+    Logger.recordOutput("TargetingSystem/isCoral", (GPmode == GPMode.CORAL));
+    return (GPmode == GPMode.CORAL);
   }
 
   public void setRobotState(RobotState state) {
@@ -271,7 +271,7 @@ public class TargetingSystem {
     LEFT
   }
 
-  public enum GP {
+  public enum GPMode {
     CORAL,
     ALGAE
   }
