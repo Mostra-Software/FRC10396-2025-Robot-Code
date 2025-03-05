@@ -67,8 +67,8 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
 
-    Logger.recordOutput("Targeting System/Sol Kamera Pose", VisionConstants.robotToCamera0);
-    Logger.recordOutput("Targeting System/Sag Kamera Pose", VisionConstants.robotToCamera1);
+    // Logger.recordOutput("Targeting System/Sol Kamera Pose", VisionConstants.robotToCamera0);
+    // Logger.recordOutput("Targeting System/Sag Kamera Pose", VisionConstants.robotToCamera1);
 
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);

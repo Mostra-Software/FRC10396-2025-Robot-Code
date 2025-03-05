@@ -17,7 +17,6 @@ import frc.robot.FieldConstants.*;
 import frc.robot.subsystems.leds.Leds;
 import java.util.Arrays;
 import java.util.List;
-import org.littletonrobotics.junction.Logger;
 
 public class TargetingSystem {
 
@@ -54,21 +53,21 @@ public class TargetingSystem {
 
   public void setCoralMode() {
     GPmode = GPMode.CORAL;
-    Logger.recordOutput("TargetingSystem/RobotMode", GPmode);
+    // Logger.recordOutput("TargetingSystem/RobotMode", GPmode);
   }
 
   public void setAlgaeMode() {
     GPmode = GPMode.ALGAE;
-    Logger.recordOutput("TargetingSystem/RobotMode", GPmode);
+    // Logger.recordOutput("TargetingSystem/RobotMode", GPmode);
   }
 
   public boolean isCoralMode() {
-    Logger.recordOutput("TargetingSystem/isCoral", (GPmode == GPMode.CORAL));
+    // Logger.recordOutput("TargetingSystem/isCoral", (GPmode == GPMode.CORAL));
     return (GPmode == GPMode.CORAL);
   }
 
   public void setRobotState(RobotState state) {
-    Logger.recordOutput("TargetingSystem/Robot State", state);
+    // Logger.recordOutput("TargetingSystem/Robot State", state);
     robotState = state;
   }
 
@@ -89,7 +88,7 @@ public class TargetingSystem {
   }
 
   public void updateElevHeight(double height) {
-    Logger.recordOutput("TargetingSystem/Elev Height", elevHeight);
+    // Logger.recordOutput("TargetingSystem/Elev Height", elevHeight);
     this.elevHeight = height;
   }
 
@@ -98,7 +97,7 @@ public class TargetingSystem {
   }
 
   public void setBranchSide(ReefBranchSide side) {
-    Logger.recordOutput("TargetingSystem/Branch Side", side);
+    // Logger.recordOutput("TargetingSystem/Branch Side", side);
     reefBranchSide = side;
     if (side == ReefBranchSide.LEFT) {
       Leds.getInstance().leftReefSelected = true;
@@ -115,7 +114,7 @@ public class TargetingSystem {
   }
 
   public void setGP(boolean hasGP) {
-    Logger.recordOutput("TargetingSystem/HasGP", hasGP);
+    // Logger.recordOutput("TargetingSystem/HasGP", hasGP);
     this.hasGP = hasGP;
   }
 
@@ -137,7 +136,7 @@ public class TargetingSystem {
   }
 
   public void setTarget(ReefBranchLevel targetBranchLevel) {
-    Logger.recordOutput("TargetingSystem/BranchLevel", targetBranchLevel);
+    // Logger.recordOutput("TargetingSystem/BranchLevel", targetBranchLevel);
     this.targetBranchLevel = targetBranchLevel;
   }
 
@@ -224,7 +223,7 @@ public class TargetingSystem {
               .toPose2d()
               .plus(robotBranchScoringOffset);
     scoringPose = AllianceFlipUtil.apply(scoringPose);
-    Logger.recordOutput("TargetingSystem/Nearest Branch", scoringPose);
+    // Logger.recordOutput("TargetingSystem/Nearest Branch", scoringPose);
     return scoringPose;
   }
 
