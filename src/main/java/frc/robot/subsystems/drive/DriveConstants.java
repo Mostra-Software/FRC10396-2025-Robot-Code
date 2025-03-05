@@ -19,7 +19,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 5.0;
+  public static final double maxSpeedMetersPerSec = 4.0;
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = 0.57785;
   public static final double wheelBase = 0.57785;
@@ -52,7 +52,7 @@ public class DriveConstants {
   public static final int backRightTurnCanId = 22;
 
   // Drive motor configuration
-  public static final int driveMotorCurrentLimit = 40;
+  public static final int driveMotorCurrentLimit = 70;
   public static final double wheelRadiusMeters = Units.inchesToMeters(1.888);
   public static final double driveMotorReduction =
       (50. / 16.) * (17. / 27.) * (45. / 15.); // SDS MK4C
@@ -67,13 +67,13 @@ public class DriveConstants {
       (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
   // Drive PID configuration
-  public static final double driveKp = 0.0; // 0.00002;
+  public static final double driveKp = 0.02;
   public static final double driveKd = 0.0;
-  public static final double driveKs = 0.15399;
-  public static final double driveKv = 0.10141;
+  public static final double driveKs = 0.16602;
+  public static final double driveKv = 0.09981;
 
   // SIM Variables
-  public static final double driveSimP = 0.05;
+  public static final double driveSimP = 0.026;
   public static final double driveSimD = 0.0;
   public static final double driveSimKs = 0.0;
   public static final double driveSimKv = 0.0789;

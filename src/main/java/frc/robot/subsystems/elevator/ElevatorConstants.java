@@ -25,7 +25,7 @@ public class ElevatorConstants {
 
   public static final double homeSequenceSlowPoint = 15;
 
-  public static final double forwardSoftLimit = 0.615;
+  public static final double forwardSoftLimit = 0.620;
   public static final double reverseSoftLimit = 0;
   public static final double PD22t =
       Units.inchesToMeters(0.25) / Math.sin(Units.degreesToRadians(180. / 22.));
@@ -47,7 +47,7 @@ public class ElevatorConstants {
   public static final double L1Height = 0.0;
   public static final double L2Height = 0.118;
   public static final double L3Height = 0.297;
-  public static final double L4Height = 0.612;
+  public static final double L4Height = 0.618;
   public static final double slowDownThreshold = 0;
   public static final double L2CoralHeight = 0;
   public static final double L2AlgaeHeight = 0.0;

@@ -49,8 +49,8 @@ public class AutoAlign extends Command {
           ANGLE_KD,
           new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
 
-  PIDController xController = new PIDController(0.25, 0, 0);
-  PIDController yController = new PIDController(0.25, 0, 0);
+  PIDController xController = new PIDController(0.75, 0, 0);
+  PIDController yController = new PIDController(0.75, 0, 0);
 
   public AutoAlign(Drive drive, TargetingSystem targetingSystem) {
     this.drive = drive;
@@ -74,7 +74,7 @@ public class AutoAlign extends Command {
     currPose = targetingSystem.getRobotPose();
     targetPose = targetingSystem.getNearestBranchSide();
 
-    Logger.recordOutput("TargetingSystem/CurrPoseRot", currPose.getX());
+    Logger.recordOutput("TargetingSystem/SetpointPoseX", targetPose.getX());
     Logger.recordOutput("TargetingSystem/SetpointPoseRot", targetPose.getRotation());
 
     // Get linear velocity
