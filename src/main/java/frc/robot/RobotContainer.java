@@ -36,6 +36,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.AutoAlign;
 import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.drive.DriveToHP;
+import frc.robot.commands.drive.DriveToMid;
 import frc.robot.commands.elevator.AutoReefHeight;
 import frc.robot.commands.elevator.AutoScore;
 import frc.robot.commands.elevator.HomeElevator;
@@ -168,25 +170,10 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    autoChooser.addOption(
-        "Auto Alignli Left",
-        new SequentialCommandGroup(
-            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
-                .andThen(new AutoAlign(drive, targetingSystem))
-                .withTimeout(4),
-            new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
-            new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
-            new Shoot(outtake).withTimeout(1.0)));
+    autoChooser.addOption("Auto Alignli Left", getLeftAutoAlignedScore());
 
-    autoChooser.addOption(
-        "Auto Alignli Right",
-        new SequentialCommandGroup(
-            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
-                .andThen(new AutoAlign(drive, targetingSystem))
-                .withTimeout(4),
-            new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
-            new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
-            new Shoot(outtake).withTimeout(1.0)));
+    autoChooser.addOption("Auto Alignli Right", getRightAutoAlignedScore());
+    autoChooser.addOption("TwoCoralLeft", getTwoCoralAutoLeft());
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -397,5 +384,58 @@ public class RobotContainer {
 
   public SequentialCommandGroup getDeAlgaeOnFalseCommand() {
     return new SequentialCommandGroup(new DeAlg(outtake, 3));
+  }
+
+  public SequentialCommandGroup getLeftAutoAlignedScore() {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+            .andThen(new AutoAlign(drive, targetingSystem))
+            .withTimeout(4),
+        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+        new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+        new Shoot(outtake).withTimeout(1.0),
+        new HomeElevator(elevator)
+        );
+  }
+
+  public SequentialCommandGroup getRightAutoAlignedScore() {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+            .andThen(new AutoAlign(drive, targetingSystem))
+            .withTimeout(4),
+        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+        new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+        new Shoot(outtake).withTimeout(1.0),
+        new HomeElevator(elevator));
+  }
+
+  public SequentialCommandGroup getTwoCoralAutoLeft(){
+    return new SequentialCommandGroup(
+        //SCORE START
+        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+            .andThen(new AutoAlign(drive, targetingSystem))
+            .withTimeout(1.95),
+        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+        new AutoReefHeight(elevator, targetingSystem).withTimeout(0.9),
+        new Shoot(outtake).withTimeout(1.0),
+        new HomeElevator(elevator),
+        //SCORE END
+
+        //PICKUP START
+        new DriveToMid(drive, targetingSystem).withTimeout(2),
+        new DriveToHP(drive, targetingSystem).withTimeout(3),
+        new AutoAlign(drive, targetingSystem).withTimeout(2),
+        //PICKUP END
+
+        //SCORE START
+        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+            .andThen(new AutoAlign(drive, targetingSystem))
+            .withTimeout(1.95),
+        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+        new AutoReefHeight(elevator, targetingSystem).withTimeout(0.9),
+        new Shoot(outtake).withTimeout(1.0),
+        new HomeElevator(elevator)
+        //SCORE END
+        );
   }
 }

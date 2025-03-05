@@ -20,7 +20,7 @@ import frc.robot.util.TargetingSystem;
 import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class AutoAlign extends Command {
+public class DriveToMid extends Command {
 
   private static final double DEADBAND = 0.1;
   private static final LoggedTunableNumber ANGLE_KP = new LoggedTunableNumber("Auto Align/Rot P");
@@ -52,7 +52,7 @@ public class AutoAlign extends Command {
   PIDController xController = new PIDController(0.75, 0, 0);
   PIDController yController = new PIDController(0.75, 0, 0);
 
-  public AutoAlign(Drive drive, TargetingSystem targetingSystem) {
+  public DriveToMid(Drive drive, TargetingSystem targetingSystem) {
     this.drive = drive;
     this.targetingSystem = targetingSystem;
     addRequirements(drive);
@@ -63,7 +63,8 @@ public class AutoAlign extends Command {
   public void initialize() {
     angleController.enableContinuousInput(-Math.PI, Math.PI);
     currPose = drive.getPose();
-    targetPose = targetingSystem.getNearestBranchSide();
+    targetPose = targetingSystem.getMidHP();
+    if (targetPose == null) end(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -72,7 +73,9 @@ public class AutoAlign extends Command {
     angleController.setP(ANGLE_KP.get());
 
     currPose = targetingSystem.getRobotPose();
-    targetPose = targetingSystem.getNearestBranchSide();
+
+    targetPose = targetingSystem.getMidHP();
+    if (targetPose == null) end(true);
 
     Logger.recordOutput("TargetingSystem/SetpointPoseX", targetPose.getX());
     Logger.recordOutput("TargetingSystem/SetpointPoseRot", targetPose.getRotation());
@@ -82,7 +85,7 @@ public class AutoAlign extends Command {
         new Translation2d(
             xController.calculate(currPose.getX(), targetPose.getX()),
             yController.calculate(currPose.getY(), targetPose.getY()));
-    // Logger.recordOutput("TargetingSystem/Auto Align Calculated Velocities", linearVelocity);
+    Logger.recordOutput("TargetingSystem/Auto Align Calculated Velocities", linearVelocity);
     // Calculate angular speed
     double omega =
         angleController.calculate(
@@ -94,7 +97,7 @@ public class AutoAlign extends Command {
             linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
             linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
             omega);
-    // Logger.recordOutput("TargetingSystem/Auto Align Chassis Speeds", speeds);
+    Logger.recordOutput("TargetingSystem/Auto Align Chassis Speeds", speeds);
 
     boolean isFlipped =
         DriverStation.getAlliance().isPresent()
