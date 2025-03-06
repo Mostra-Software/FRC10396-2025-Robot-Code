@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.TargetingSystem;
-import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveToHP extends Command {
@@ -77,15 +76,15 @@ public class DriveToHP extends Command {
     targetPose = targetingSystem.getAutoHPZone();
     if (targetPose == null) end(true);
 
-    Logger.recordOutput("TargetingSystem/SetpointPoseX", targetPose.getX());
-    Logger.recordOutput("TargetingSystem/SetpointPoseRot", targetPose.getRotation());
+    // Logger.recordOutput("TargetingSystem/SetpointPoseX", targetPose.getX());
+    // Logger.recordOutput("TargetingSystem/SetpointPoseRot", targetPose.getRotation());
 
     // Get linear velocity
     Translation2d linearVelocity =
         new Translation2d(
             xController.calculate(currPose.getX(), targetPose.getX()),
             yController.calculate(currPose.getY(), targetPose.getY()));
-    Logger.recordOutput("TargetingSystem/Auto Align Calculated Velocities", linearVelocity);
+    // Logger.recordOutput("TargetingSystem/Auto Align Calculated Velocities", linearVelocity);
     // Calculate angular speed
     double omega =
         angleController.calculate(
@@ -97,7 +96,7 @@ public class DriveToHP extends Command {
             linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
             linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
             omega);
-    Logger.recordOutput("TargetingSystem/Auto Align Chassis Speeds", speeds);
+    // Logger.recordOutput("TargetingSystem/Auto Align Chassis Speeds", speeds);
 
     boolean isFlipped =
         DriverStation.getAlliance().isPresent()

@@ -47,4 +47,6 @@ public interface OuttakeIO {
   public default void setAngle(double angle) {}
 
   public default void setHome(boolean isHome) {}
+
+  public default void setArmPercent(double volts) {}
 }

@@ -118,7 +118,6 @@ public class VisionIOPhotonVision implements VisionIO {
                   PoseObservationType.PHOTONVISION)); // Observation type
         }
       }
-      
     }
 
     // Save pose observations to inputs object
@@ -134,5 +133,4 @@ public class VisionIOPhotonVision implements VisionIO {
       inputs.tagIds[i++] = id;
     }
   }
-  
 }

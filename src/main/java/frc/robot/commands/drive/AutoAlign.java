@@ -73,10 +73,11 @@ public class AutoAlign extends Command {
 
     currPose = targetingSystem.getRobotPose();
     targetPose = targetingSystem.getNearestBranchSide();
+    Logger.recordOutput("TargetingSystem/TARGET POSE", targetPose);
 
-    Logger.recordOutput("TargetingSystem/SetpointPoseX", targetPose.getX());
-    Logger.recordOutput("TargetingSystem/SetpointPoseRot", targetPose.getRotation());
-    Logger.recordOutput("TargetingSystem/SetpointPoseY", targetPose.getY());
+    // Logger.recordOutput("TargetingSystem/SetpointPoseX", targetPose.getX());
+    // Logger.recordOutput("TargetingSystem/SetpointPoseRot", targetPose.getRotation());
+    // Logger.recordOutput("TargetingSystem/SetpointPoseY", targetPose.getY());
     // Get linear velocity
     Translation2d linearVelocity =
         new Translation2d(
@@ -112,8 +113,8 @@ public class AutoAlign extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Math.abs(delta.getX()) < 0.03
-        && Math.abs(delta.getY()) < 0.03
-        && Math.abs(delta.getRotation().getDegrees()) < 4);
+    return (Math.abs(delta.getX()) < 0.01
+        && Math.abs(delta.getY()) < 0.01
+        && Math.abs(delta.getRotation().getDegrees()) < 1);
   }
 }

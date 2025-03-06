@@ -43,7 +43,7 @@ public class Outtake extends SubsystemBase {
   }
 
   public void setArmPercent(double percent) {
-    io.setVoltage(percent);
+    io.setArmPercent(percent);
   }
 
   public void setAngle(double angle) {
@@ -64,5 +64,10 @@ public class Outtake extends SubsystemBase {
 
   public void setHome(boolean isHome) {
     io.setHome(isHome);
+  }
+
+  public Object isAtPreHomingPos() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'isAtPreHomingPos'");
   }
 }

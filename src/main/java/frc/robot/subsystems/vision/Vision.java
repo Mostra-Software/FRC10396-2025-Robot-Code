@@ -24,7 +24,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
@@ -67,10 +66,10 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //SmartDashboard.putBoolean("HAS TARGET", io.hasTarget);
+    // SmartDashboard.putBoolean("HAS TARGET", io.hasTarget);
 
-    // Logger.recordOutput("Targeting System/Sol Kamera Pose", VisionConstants.robotToCamera0);
-    // Logger.recordOutput("Targeting System/Sag Kamera Pose", VisionConstants.robotToCamera1);
+    Logger.recordOutput("Targeting System/Sol Kamera Pose", VisionConstants.robotToCamera0);
+    Logger.recordOutput("Targeting System/Sag Kamera Pose", VisionConstants.robotToCamera1);
 
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
