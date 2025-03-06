@@ -25,8 +25,8 @@ public class AutoAlign extends Command {
   private static final double DEADBAND = 0.1;
   private static final LoggedTunableNumber ANGLE_KP = new LoggedTunableNumber("Auto Align/Rot P");
   private static final double ANGLE_KD = 0.0;
-  private static final double ANGLE_MAX_VELOCITY = 20.0;
-  private static final double ANGLE_MAX_ACCELERATION = 40.0;
+  private static final double ANGLE_MAX_VELOCITY = 30.0;
+  private static final double ANGLE_MAX_ACCELERATION = 50.0;
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
@@ -39,7 +39,7 @@ public class AutoAlign extends Command {
   private TargetingSystem targetingSystem;
 
   static {
-    ANGLE_KP.initDefault(2.3);
+    ANGLE_KP.initDefault(1.84);
   }
 
   ProfiledPIDController angleController =
@@ -49,8 +49,8 @@ public class AutoAlign extends Command {
           ANGLE_KD,
           new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
 
-  PIDController xController = new PIDController(0.75, 0, 0);
-  PIDController yController = new PIDController(0.75, 0, 0);
+  PIDController xController = new PIDController(0.87, 0, 0);
+  PIDController yController = new PIDController(0.87, 0, 0);
 
   public AutoAlign(Drive drive, TargetingSystem targetingSystem) {
     this.drive = drive;
@@ -76,7 +76,7 @@ public class AutoAlign extends Command {
 
     Logger.recordOutput("TargetingSystem/SetpointPoseX", targetPose.getX());
     Logger.recordOutput("TargetingSystem/SetpointPoseRot", targetPose.getRotation());
-
+    Logger.recordOutput("TargetingSystem/SetpointPoseY", targetPose.getY());
     // Get linear velocity
     Translation2d linearVelocity =
         new Translation2d(

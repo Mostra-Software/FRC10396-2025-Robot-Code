@@ -28,6 +28,7 @@ import org.photonvision.PhotonCamera;
 public class VisionIOPhotonVision implements VisionIO {
   protected final PhotonCamera camera;
   protected final Transform3d robotToCamera;
+  private boolean hasTarget = false;
 
   /**
    * Creates a new VisionIOPhotonVision.
@@ -43,19 +44,23 @@ public class VisionIOPhotonVision implements VisionIO {
   @Override
   public void updateInputs(VisionIOInputs inputs) {
     inputs.connected = camera.isConnected();
+    inputs.hasTarget = hasTarget;
 
     // Read new camera observations
     Set<Short> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
     for (var result : camera.getAllUnreadResults()) {
+
       // Update latest target observation
       if (result.hasTargets()) {
+        hasTarget = true;
         inputs.latestTargetObservation =
             new TargetObservation(
                 Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
                 Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
       } else {
         inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
+        hasTarget = false;
       }
 
       // Add pose observation
@@ -113,6 +118,7 @@ public class VisionIOPhotonVision implements VisionIO {
                   PoseObservationType.PHOTONVISION)); // Observation type
         }
       }
+      
     }
 
     // Save pose observations to inputs object
@@ -128,4 +134,5 @@ public class VisionIOPhotonVision implements VisionIO {
       inputs.tagIds[i++] = id;
     }
   }
+  
 }

@@ -394,8 +394,7 @@ public class RobotContainer {
         new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
         new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
         new Shoot(outtake).withTimeout(1.0),
-        new HomeElevator(elevator)
-        );
+        new HomeElevator(elevator));
   }
 
   public SequentialCommandGroup getRightAutoAlignedScore() {
@@ -409,9 +408,9 @@ public class RobotContainer {
         new HomeElevator(elevator));
   }
 
-  public SequentialCommandGroup getTwoCoralAutoLeft(){
+  public SequentialCommandGroup getTwoCoralAutoLeft() {
     return new SequentialCommandGroup(
-        //SCORE START
+        // SCORE START
         new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
             .andThen(new AutoAlign(drive, targetingSystem))
             .withTimeout(1.95),
@@ -419,15 +418,16 @@ public class RobotContainer {
         new AutoReefHeight(elevator, targetingSystem).withTimeout(0.9),
         new Shoot(outtake).withTimeout(1.0),
         new HomeElevator(elevator),
-        //SCORE END
+        // SCORE END
 
-        //PICKUP START
+        // PICKUP START
         new DriveToMid(drive, targetingSystem).withTimeout(2),
         new DriveToHP(drive, targetingSystem).withTimeout(3),
+        new Intake(outtake, driverJoy, targetingSystem),
         new AutoAlign(drive, targetingSystem).withTimeout(2),
-        //PICKUP END
+        // PICKUP END
 
-        //SCORE START
+        // SCORE START
         new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
             .andThen(new AutoAlign(drive, targetingSystem))
             .withTimeout(1.95),
@@ -435,7 +435,7 @@ public class RobotContainer {
         new AutoReefHeight(elevator, targetingSystem).withTimeout(0.9),
         new Shoot(outtake).withTimeout(1.0),
         new HomeElevator(elevator)
-        //SCORE END
+        // SCORE END
         );
   }
 }
