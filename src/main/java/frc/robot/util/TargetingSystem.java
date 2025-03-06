@@ -31,8 +31,8 @@ public class TargetingSystem {
   private Transform2d robotHPOffset =
       new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
 
-  private Transform2d robotHPAutoOffsetPLUS = new Transform2d(0, 1.7, Rotation2d.fromDegrees(0));
-  private Transform2d robotHPAutoOffsetMINUS = new Transform2d(0, -1.7, Rotation2d.fromDegrees(0));
+  private Transform2d robotHPAutoOffsetPLUS = new Transform2d(0, -1.7, Rotation2d.fromDegrees(0));
+  private Transform2d robotHPAutoOffsetMINUS = new Transform2d(0, 1.7, Rotation2d.fromDegrees(0));
 
   private Boolean hasGP = false;
   private double elevHeight = 0.0;
@@ -191,26 +191,23 @@ public class TargetingSystem {
                 AllianceFlipUtil.apply(CoralStation.leftCenterFace),
                 AllianceFlipUtil.apply(CoralStation.rightCenterFace)));
     robotPose = nearestHP.plus(robotHPOffset);
-    //Logger.recordOutput("TargetingSystem/HP Auto Pose", robotPose);
+    // Logger.recordOutput("TargetingSystem/HP Auto Pose", robotPose);
 
     return robotPose;
   }
 
   public Pose2d getMidHP() {
-    
     Pose2d robotPose = getRobotPose();
     if (robotPose.getMeasureY().in(Meters) > 4.) {
       robotPose = getRobotPose().plus(robotHPAutoOffsetPLUS);
     } else {
       robotPose = robotPose.plus(robotHPAutoOffsetMINUS);
     }
-    if (AllianceFlipUtil.shouldFlip()){
-      robotPose = robotPose.plus(new Transform2d(-0.6, 0, Rotation2d.fromDegrees(0)));
-    }
-    else robotPose = robotPose.plus(new Transform2d(0.6, 0, Rotation2d.fromDegrees(0)));
+    if (AllianceFlipUtil.shouldFlip()) {
+      robotPose = robotPose.plus(new Transform2d(0.6, 0, Rotation2d.fromDegrees(0)));
+    } else robotPose = robotPose.plus(new Transform2d(-0.6, 0, Rotation2d.fromDegrees(0)));
 
-
-    //Logger.recordOutput("TargetingSystem/MidAuto Pose", robotPose);
+    Logger.recordOutput("TargetingSystem/MidAuto Pose", robotPose);
     return robotPose;
   }
 
