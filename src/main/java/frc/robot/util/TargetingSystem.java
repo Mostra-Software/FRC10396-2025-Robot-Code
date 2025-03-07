@@ -209,7 +209,7 @@ public class TargetingSystem {
       robotPose = robotPose.plus(new Transform2d(-0.6, 0, Rotation2d.fromDegrees(0)));
     } else robotPose = robotPose.plus(new Transform2d(0.6, 0, Rotation2d.fromDegrees(0)));
 
-   // Logger.recordOutput("TargetingSystem/MidAuto Pose", robotPose);
+    Logger.recordOutput("TargetingSystem/MidAuto Pose", robotPose);
     return robotPose;
   }
 
