@@ -271,26 +271,19 @@ public class RobotContainer {
             new ConditionalCommand(
                 new HomeElevator(elevator).andThen(new RunOuttake(true, 0, outtake)),
                 Commands.none(),
-                elevator::isHome)
-            );
+                elevator::isHome));
 
-    operatorJoy.R1()
+    operatorJoy
+        .R1()
         .whileTrue(
             new SequentialCommandGroup(
                 Commands.runOnce(() -> targetingSystem.setAlgaeMode()),
-                new AutoReefHeight(elevator, targetingSystem)
-                .alongWith(
-                    getDeAlgeCommand()
-                )
-            )
-        )
+                new AutoReefHeight(elevator, targetingSystem).alongWith(getDeAlgeCommand())))
         .onFalse(
             new ParallelCommandGroup(
                 Commands.runOnce(() -> targetingSystem.setCoralMode()),
                 new HomeElevator(elevator),
-                getDeAlgaeOnFalseCommand()
-            )
-        );
+                getDeAlgaeOnFalseCommand()));
 
     // Reset gyro to 0° when B button is pressed
     driverJoy
@@ -305,7 +298,7 @@ public class RobotContainer {
 
     // driverJoy.y().onTrue(Commands.runOnce(() ->
     // drive.setPoseFacingReef()).ignoringDisable(true));
-    //driverJoy.y().whileTrue(getDeAlgeCommand()).onFalse(getDeAlgaeOnFalseCommand());
+    // driverJoy.y().whileTrue(getDeAlgeCommand()).onFalse(getDeAlgaeOnFalseCommand());
 
     // Elevator Openloop Up
     operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
@@ -350,7 +343,6 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4))));
-
 
     // Outtake Shoot
     operatorJoy.R2().whileTrue(new Shoot(outtake)).onFalse(getStopIntakeCommand());

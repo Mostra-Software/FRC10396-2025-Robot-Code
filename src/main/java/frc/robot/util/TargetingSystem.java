@@ -18,6 +18,8 @@ import frc.robot.subsystems.leds.Leds;
 import java.util.Arrays;
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
+
 public class TargetingSystem {
 
   private AprilTagFieldLayout fieldLayout =
@@ -190,26 +192,24 @@ public class TargetingSystem {
                 AllianceFlipUtil.apply(CoralStation.leftCenterFace),
                 AllianceFlipUtil.apply(CoralStation.rightCenterFace)));
     robotPose = nearestHP.plus(robotHPOffset);
-    //Logger.recordOutput("TargetingSystem/HP Auto Pose", robotPose);
+    // Logger.recordOutput("TargetingSystem/HP Auto Pose", robotPose);
 
     return robotPose;
   }
 
   public Pose2d getMidHP() {
-    
+
     Pose2d robotPose = getRobotPose();
     if (robotPose.getMeasureY().in(Meters) > 4.) {
       robotPose = robotPose.plus(robotHPAutoOffsetPLUS);
     } else {
       robotPose = robotPose.plus(robotHPAutoOffsetMINUS);
     }
-    if (AllianceFlipUtil.shouldFlip()){
+    if (AllianceFlipUtil.shouldFlip()) {
       robotPose = robotPose.plus(new Transform2d(-0.6, 0, Rotation2d.fromDegrees(0)));
-    }
-    else robotPose = robotPose.plus(new Transform2d(0.6, 0, Rotation2d.fromDegrees(0)));
+    } else robotPose = robotPose.plus(new Transform2d(0.6, 0, Rotation2d.fromDegrees(0)));
 
-
-    //Logger.recordOutput("TargetingSystem/MidAuto Pose", robotPose);
+   // Logger.recordOutput("TargetingSystem/MidAuto Pose", robotPose);
     return robotPose;
   }
 

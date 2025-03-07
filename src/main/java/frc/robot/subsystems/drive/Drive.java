@@ -128,12 +128,11 @@ public class Drive extends SubsystemBase {
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
-          Logger.recordOutput(
-              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+          //Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
         });
     PathPlannerLogging.setLogTargetPoseCallback(
         (targetPose) -> {
-          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+          //Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
     // Configure SysId
@@ -209,7 +208,7 @@ public class Drive extends SubsystemBase {
     autoSnapPose = getAutoSnapPose();
     closestBranch = targetingSystem.getNearestBranchSide();
     targetingSystem.updateRobotPose(getPose());
-    // targetingSystem.getMidHP();
+    targetingSystem.getMidHP();
     // targetingSystem.getAutoHPZone();
   }
 
@@ -234,7 +233,7 @@ public class Drive extends SubsystemBase {
     }
 
     // Log optimized setpoints (runSetpoint mutates each state)
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+    //Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
 
   /** Runs the drive in a straight line with the specified drive output. */
@@ -284,7 +283,7 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
-  @AutoLogOutput(key = "TargetingSystem/AutoSnapPose")
+  //@AutoLogOutput(key = "TargetingSystem/AutoSnapPose")
   private Pose2d getAutoSnapPose() {
     Pose2d closestHP = targetingSystem.getHPZone();
     if (closestHP == null) {

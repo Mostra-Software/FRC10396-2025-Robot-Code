@@ -4,9 +4,7 @@
 
 package frc.robot.commands.elevator;
 
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.outtake.DeAlg;
 import frc.robot.commands.outtake.Shoot;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.outtake.Outtake;
