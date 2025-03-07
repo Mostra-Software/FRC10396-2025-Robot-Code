@@ -209,7 +209,7 @@ public class Drive extends SubsystemBase {
     autoSnapPose = getAutoSnapPose();
     closestBranch = targetingSystem.getNearestBranchSide();
     targetingSystem.updateRobotPose(getPose());
-    targetingSystem.getMidHP();
+    // targetingSystem.getMidHP();
     // targetingSystem.getAutoHPZone();
   }
 

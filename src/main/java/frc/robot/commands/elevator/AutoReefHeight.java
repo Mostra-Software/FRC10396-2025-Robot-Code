@@ -24,7 +24,6 @@ public class AutoReefHeight extends Command {
   @Override
   public void initialize() {
     int targetLevel = elevator.getTargetReef();
-    System.out.println(targetLevel);
     if (targetingSystem.isCoralMode()) {
       if (targetLevel == 0) {
         targetHeight = ElevatorConstants.L1Height;

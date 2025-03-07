@@ -47,14 +47,14 @@ public class VisionConstants {
           xPos,
           yPos,
           zPos,
-          new Rotation3d(0.0, Units.degreesToRadians(15), Units.degreesToRadians(-25)));
+          new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(-25)));
   // CAMERA 0 is Right Camera while Facing Outtake
   public static Transform3d robotToCamera1 =
       new Transform3d(
           xPos,
           -yPos,
           zPos,
-          new Rotation3d(0.0, Units.degreesToRadians(15), Units.degreesToRadians(25)));
+          new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(25)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.2;

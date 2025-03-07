@@ -43,7 +43,9 @@ import frc.robot.commands.elevator.AutoScore;
 import frc.robot.commands.elevator.HomeElevator;
 import frc.robot.commands.elevator.SetElevatorPercent;
 import frc.robot.commands.outtake.DeAlg;
+import frc.robot.commands.outtake.HomeAlgae;
 import frc.robot.commands.outtake.Intake;
+import frc.robot.commands.outtake.RunDealg;
 import frc.robot.commands.outtake.RunOuttake;
 import frc.robot.commands.outtake.Shoot;
 import frc.robot.subsystems.drive.Drive;
@@ -355,6 +357,9 @@ public class RobotContainer {
 
     // Manuel Feed for Outtake
     operatorJoy.R1().whileTrue(new RunOuttake(true, 0.15, outtake));
+
+    operatorJoy.povLeft().whileTrue(new RunDealg(outtake, false));
+    operatorJoy.povRight().whileTrue(new RunDealg(outtake, true));
   }
 
   public TargetingSystem getTargetingSystem() {
@@ -383,7 +388,8 @@ public class RobotContainer {
   }
 
   public SequentialCommandGroup getDeAlgaeOnFalseCommand() {
-    return new SequentialCommandGroup(new DeAlg(outtake, 3));
+    return new HomeAlgae(outtake).andThen(new RunCommand(() -> outtake.runPercent(0.0), outtake));
+    // return new SequentialCommandGroup(new DeAlg(outtake, 3).withTimeout(1));
   }
 
   public SequentialCommandGroup getLeftAutoAlignedScore() {
@@ -423,6 +429,7 @@ public class RobotContainer {
         // PICKUP START
         new DriveToMid(drive, targetingSystem).withTimeout(2),
         new DriveToHP(drive, targetingSystem).withTimeout(3),
+        new Intake(outtake, driverJoy, targetingSystem),
         new AutoAlign(drive, targetingSystem).withTimeout(2),
         // PICKUP END
 
