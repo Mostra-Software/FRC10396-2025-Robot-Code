@@ -388,7 +388,7 @@ public class RobotContainer {
   }
 
   public SequentialCommandGroup getDeAlgaeOnFalseCommand() {
-    return new HomeAlgae(outtake);
+    return new HomeAlgae(outtake).andThen(new RunCommand(() -> outtake.runPercent(0.0), outtake));
     // return new SequentialCommandGroup(new DeAlg(outtake, 3).withTimeout(1));
   }
 
