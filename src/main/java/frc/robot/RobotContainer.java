@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -266,7 +267,30 @@ public class RobotContainer {
 
     autoScoreGetReady
         .onTrue(new AutoScore(elevator, outtake, driverJoy.rightTrigger(.5), targetingSystem))
-        .onFalse(new HomeElevator(elevator).andThen(new RunOuttake(true, 0, outtake)));
+        .onFalse(
+            new ConditionalCommand(
+                new HomeElevator(elevator).andThen(new RunOuttake(true, 0, outtake)),
+                Commands.none(),
+                elevator::isHome)
+            );
+
+    operatorJoy.R1()
+        .whileTrue(
+            new SequentialCommandGroup(
+                Commands.runOnce(() -> targetingSystem.setAlgaeMode()),
+                new AutoReefHeight(elevator, targetingSystem)
+                .alongWith(
+                    getDeAlgeCommand()
+                )
+            )
+        )
+        .onFalse(
+            new ParallelCommandGroup(
+                Commands.runOnce(() -> targetingSystem.setCoralMode()),
+                new HomeElevator(elevator),
+                getDeAlgaeOnFalseCommand()
+            )
+        );
 
     // Reset gyro to 0° when B button is pressed
     driverJoy
@@ -281,7 +305,7 @@ public class RobotContainer {
 
     // driverJoy.y().onTrue(Commands.runOnce(() ->
     // drive.setPoseFacingReef()).ignoringDisable(true));
-    driverJoy.y().whileTrue(getDeAlgeCommand()).onFalse(getDeAlgaeOnFalseCommand());
+    //driverJoy.y().whileTrue(getDeAlgeCommand()).onFalse(getDeAlgaeOnFalseCommand());
 
     // Elevator Openloop Up
     operatorJoy.povUp().whileTrue(new SetElevatorPercent(0.5, elevator));
@@ -327,21 +351,6 @@ public class RobotContainer {
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4))));
 
-    // L2 Coral
-    operatorJoy
-        .square()
-        .doublePress()
-        .onTrue(
-            Commands.runOnce(() -> targetingSystem.setAlgaeMode())
-                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2))));
-
-    // L3 Coral
-    operatorJoy
-        .circle()
-        .doublePress()
-        .onTrue(
-            Commands.runOnce(() -> targetingSystem.setAlgaeMode())
-                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3))));
 
     // Outtake Shoot
     operatorJoy.R2().whileTrue(new Shoot(outtake)).onFalse(getStopIntakeCommand());

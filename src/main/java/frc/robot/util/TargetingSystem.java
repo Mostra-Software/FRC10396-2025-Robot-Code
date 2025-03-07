@@ -199,7 +199,7 @@ public class TargetingSystem {
     
     Pose2d robotPose = getRobotPose();
     if (robotPose.getMeasureY().in(Meters) > 4.) {
-      robotPose = getRobotPose().plus(robotHPAutoOffsetPLUS);
+      robotPose = robotPose.plus(robotHPAutoOffsetPLUS);
     } else {
       robotPose = robotPose.plus(robotHPAutoOffsetMINUS);
     }

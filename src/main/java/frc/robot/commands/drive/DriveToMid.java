@@ -74,7 +74,6 @@ public class DriveToMid extends Command {
 
     currPose = targetingSystem.getRobotPose();
 
-    targetPose = targetingSystem.getMidHP();
     if (targetPose == null) end(true);
 
     Logger.recordOutput("TargetingSystem/SetpointPoseX", targetPose.getX());
