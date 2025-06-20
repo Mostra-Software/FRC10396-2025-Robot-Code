@@ -37,9 +37,9 @@ public class VisionConstants {
   // https://www.chiefdelphi.com/t/photon-vision-definition-of-robot-origin/455598/3?u=burakdemirelli
   // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
   public static final double mmToMeters = 0.001;
-  public static final double yPos = 286.64677 * mmToMeters;
-  public static final double xPos = 340.62610 * mmToMeters;
-  public static final double zPos = 271.38075 * mmToMeters;
+  public static final double yPos = 293.292 * mmToMeters;
+  public static final double xPos = 342.3061895256 * mmToMeters;
+  public static final double zPos = 345.55375 * mmToMeters;
 
   // CAMERA 0 is Left Camera while Facing Outtake
   public static Transform3d robotToCamera0 =
@@ -47,14 +47,14 @@ public class VisionConstants {
           xPos,
           yPos,
           zPos,
-          new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(-25)));
+          new Rotation3d(0.0, Units.degreesToRadians(7), Units.degreesToRadians(-45)));
   // CAMERA 0 is Right Camera while Facing Outtake
   public static Transform3d robotToCamera1 =
       new Transform3d(
           xPos,
           -yPos,
           zPos,
-          new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(25)));
+          new Rotation3d(0.0, Units.degreesToRadians(7), Units.degreesToRadians(45)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.2;

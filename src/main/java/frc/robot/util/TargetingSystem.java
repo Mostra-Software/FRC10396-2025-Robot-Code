@@ -17,7 +17,6 @@ import frc.robot.FieldConstants.*;
 import frc.robot.subsystems.leds.Leds;
 import java.util.Arrays;
 import java.util.List;
-
 import org.littletonrobotics.junction.Logger;
 
 public class TargetingSystem {
@@ -29,6 +28,12 @@ public class TargetingSystem {
   private ReefBranchSide reefBranchSide = ReefBranchSide.RIGHT;
   private Transform2d robotBranchScoringOffset =
       new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(180));
+
+  private Transform2d leftrobotBranchScoringOffset =
+      new Transform2d((0.883 / 2.0) + 0.1, -Inches.of(1.0).in(Meters), Rotation2d.fromDegrees(180));
+
+  private Transform2d rightrobotBranchScoringOffset =
+      new Transform2d((0.883 / 2.0) + 0.1, Inches.of(1.0).in(Meters), Rotation2d.fromDegrees(185));
   private Transform2d robotHPOffset =
       new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
 
@@ -256,9 +261,12 @@ public class TargetingSystem {
               .get(branch)
               .get(ReefHeight.L2)
               .toPose2d()
-              .plus(robotBranchScoringOffset);
+              .plus(
+                  (getBranchSide() == ReefBranchSide.LEFT)
+                      ? leftrobotBranchScoringOffset
+                      : rightrobotBranchScoringOffset);
     scoringPose = AllianceFlipUtil.apply(scoringPose);
-    // Logger.recordOutput("TargetingSystem/Nearest Branch", scoringPose);
+    Logger.recordOutput("TargetingSystem/Nearest Branch", scoringPose);
     return scoringPose;
   }
 
