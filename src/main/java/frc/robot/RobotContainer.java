@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -95,7 +97,7 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController driverJoy = new CommandXboxController(1);
 
-  private final CommandPS5Controller operatorJoy = new CommandPS5Controller(2);
+  private final CommandGenericHID operatorJoy = new CommandGenericHID(3); 
 
   private Trigger autoScoreGetReady = driverJoy.leftTrigger(0.5);
 
@@ -274,7 +276,7 @@ public class RobotContainer {
                 elevator::isHome));
 
     operatorJoy
-        .R1()
+        .button(0)
         .whileTrue(
             new SequentialCommandGroup(
                 Commands.runOnce(() -> targetingSystem.setAlgaeMode()),
@@ -309,7 +311,7 @@ public class RobotContainer {
     // Elevator ClosedLoop Controls
 
     // Home
-    operatorJoy.L1().whileTrue(new HomeElevator(elevator));
+    operatorJoy.button(8).whileTrue(new HomeElevator(elevator));
 
     // Auto Assist Toggle for Teleop
     driverJoy
@@ -318,38 +320,38 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> targetingSystem.toggleAutoAssist()));
     // L1
     operatorJoy
-        .cross()
+        .button(1)
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L1))));
 
     // L2
     operatorJoy
-        .square()
+        .button(2)
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2))));
 
     // L3
     operatorJoy
-        .circle()
+        .button(3)
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3))));
 
     // L4
     operatorJoy
-        .triangle()
+        .button(4)
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4))));
 
     // Outtake Shoot
-    operatorJoy.R2().whileTrue(new Shoot(outtake)).onFalse(getStopIntakeCommand());
+    operatorJoy.button(5).whileTrue(new Shoot(outtake)).onFalse(getStopIntakeCommand());
 
     // Outtake Intake
     operatorJoy
-        .L2()
+        .button(6)
         .whileTrue(new Intake(outtake, driverJoy, targetingSystem))
         .onFalse(getStopIntakeCommand());
 
@@ -357,7 +359,7 @@ public class RobotContainer {
     // operatorJoy.R1().whileTrue(new DeAlg(outtake));
 
     // Manuel Feed for Outtake
-    operatorJoy.R1().whileTrue(new RunOuttake(true, 0.15, outtake));
+    operatorJoy.button(7).whileTrue(new RunOuttake(true, 0.15, outtake));
 
     operatorJoy.povLeft().whileTrue(new RunDealg(outtake, false));
     operatorJoy.povRight().whileTrue(new RunDealg(outtake, true));
