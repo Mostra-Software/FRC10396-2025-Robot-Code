@@ -11,57 +11,39 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Pathsiz_align"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Start_I_Score"
+            "pathName": "New Path"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "auto_align"
+            "name": "run_intakke"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "I_Hp"
+            "pathName": "Copy of New Path"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "HP_L_Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L_HP"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HP_L_Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L_HP"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HP_K"
+            "name": "Pathsiz_align"
           }
         }
       ]
     }
   },
   "resetOdom": false,
-  "folder": "FAR",
+  "folder": null,
   "choreoAuto": false
 }

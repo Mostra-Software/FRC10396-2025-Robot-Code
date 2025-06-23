@@ -5,9 +5,27 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "set_l4"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Start_H_Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "auto_align"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4_Shoot"
           }
         },
         {
@@ -17,9 +35,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "wait_until_has_gp"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "HP_C_SCORE"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4_Shoot"
           }
         },
         {
@@ -29,9 +59,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "wait_until_has_gp"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "HP_C_SCORE"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4_Shoot"
           }
         },
         {

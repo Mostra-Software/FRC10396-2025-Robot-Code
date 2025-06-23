@@ -1,0 +1,25 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start_I_Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "auto_align"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": "FAR",
+  "choreoAuto": false
+}

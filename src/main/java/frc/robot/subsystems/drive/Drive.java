@@ -119,7 +119,7 @@ public class Drive extends SubsystemBase {
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(3, 0.0, 0.0), new PIDConstants(0, 0.0, 0)),
+        new PPHolonomicDriveController(new PIDConstants(1, 0.0, 0.0), new PIDConstants(0, 0.0, 0)),
         config,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);

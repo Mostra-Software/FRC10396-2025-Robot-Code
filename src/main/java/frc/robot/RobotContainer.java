@@ -26,12 +26,12 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -95,7 +95,7 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController driverJoy = new CommandXboxController(1);
 
-  private final CommandPS5Controller operatorJoy = new CommandPS5Controller(2);
+  private final CommandGenericHID operatorJoy = new CommandGenericHID(3);
 
   private Trigger autoScoreGetReady = driverJoy.leftTrigger(0.5);
 
@@ -169,6 +169,15 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
+    NamedCommands.registerCommand(
+        "auto_align",
+        new ParallelCommandGroup(
+            new InstantCommand(() -> System.out.println("ASDFGFDSZASDSADASDAQSDDSADDSADSA")),
+            new AutoAlign(drive, targetingSystem).withTimeout(10)));
+
+    NamedCommands.registerCommand("Pathsiz_align", getLeftAutoAlignedScore());
+
+    NamedCommands.registerCommand("run_intakke", new Intake(outtake, driverJoy, targetingSystem));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -198,14 +207,28 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint, targetingSystem));
 
-    NamedCommands.registerCommand(
-        "auto_align", new AutoAlign(drive, targetingSystem).withTimeout(2));
+    NamedCommands.registerCommand("wait_until_has_gp", new WaitCommand(10).until(outtake::hasGP));
 
     // Event Triggers for Auton
     new EventTrigger("run_intake_trigger")
-        .whileTrue(new Intake(outtake, driverJoy, targetingSystem).withTimeout(1.5));
+        .whileTrue(new Intake(outtake, driverJoy, targetingSystem).withTimeout(3));
 
     new EventTrigger("run_shooter_trigger").whileTrue(new Shoot(outtake).withTimeout(1));
+
+    new EventTrigger("set_l4")
+        .whileTrue(
+            new InstantCommand(() -> targetingSystem.setCoralMode())
+                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4))));
+
+    new EventTrigger("set_l3")
+        .whileTrue(
+            new InstantCommand(() -> targetingSystem.setCoralMode())
+                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3))));
+
+    new EventTrigger("set_left")
+        .whileTrue(new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT)));
+    new EventTrigger("set_right")
+        .whileTrue(new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT)));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -265,16 +288,16 @@ public class RobotContainer {
     //
     driverJoy.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    autoScoreGetReady
-        .onTrue(new AutoScore(elevator, outtake, driverJoy.rightTrigger(.5), targetingSystem))
-        .onFalse(
-            new ConditionalCommand(
-                new HomeElevator(elevator).andThen(new RunOuttake(true, 0, outtake)),
-                Commands.none(),
-                elevator::isHome));
+    autoScoreGetReady.onTrue(
+        new AutoScore(elevator, outtake, driverJoy.rightTrigger(.5), targetingSystem));
+    /*.onFalse(
+    new ConditionalCommand(
+        new HomeElevator(elevator).andThen(new RunOuttake(true, 0, outtake)),
+        Commands.none(),
+        elevator::isHome)); */
 
     operatorJoy
-        .R1()
+        .button(12)
         .whileTrue(
             new SequentialCommandGroup(
                 Commands.runOnce(() -> targetingSystem.setAlgaeMode()),
@@ -309,7 +332,7 @@ public class RobotContainer {
     // Elevator ClosedLoop Controls
 
     // Home
-    operatorJoy.L1().whileTrue(new HomeElevator(elevator));
+    operatorJoy.button(5).whileTrue(new HomeElevator(elevator));
 
     // Auto Assist Toggle for Teleop
     driverJoy
@@ -318,38 +341,38 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> targetingSystem.toggleAutoAssist()));
     // L1
     operatorJoy
-        .cross()
+        .button(2)
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L1))));
 
     // L2
     operatorJoy
-        .square()
+        .button(1)
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L2))));
 
     // L3
     operatorJoy
-        .circle()
+        .button(3)
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3))));
 
     // L4
     operatorJoy
-        .triangle()
+        .button(4)
         .onTrue(
             new InstantCommand(() -> targetingSystem.setCoralMode())
                 .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4))));
 
     // Outtake Shoot
-    operatorJoy.R2().whileTrue(new Shoot(outtake)).onFalse(getStopIntakeCommand());
+    operatorJoy.button(8).whileTrue(new Shoot(outtake)).onFalse(getStopIntakeCommand());
 
     // Outtake Intake
     operatorJoy
-        .L2()
+        .button(7)
         .whileTrue(new Intake(outtake, driverJoy, targetingSystem))
         .onFalse(getStopIntakeCommand());
 
@@ -357,7 +380,7 @@ public class RobotContainer {
     // operatorJoy.R1().whileTrue(new DeAlg(outtake));
 
     // Manuel Feed for Outtake
-    operatorJoy.R1().whileTrue(new RunOuttake(true, 0.15, outtake));
+    operatorJoy.button(6).whileTrue(new RunOuttake(true, 0.15, outtake));
 
     operatorJoy.povLeft().whileTrue(new RunDealg(outtake, false));
     operatorJoy.povRight().whileTrue(new RunDealg(outtake, true));
@@ -406,10 +429,10 @@ public class RobotContainer {
 
   public SequentialCommandGroup getRightAutoAlignedScore() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT))
             .andThen(new AutoAlign(drive, targetingSystem))
             .withTimeout(4),
-        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L3)),
         new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
         new Shoot(outtake).withTimeout(1.0),
         new HomeElevator(elevator));
