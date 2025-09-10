@@ -30,7 +30,7 @@ public class TargetingSystem {
       new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(180));
 
   private Transform2d leftrobotBranchScoringOffset =
-      new Transform2d((0.883 / 2.0) + 0.1, -Inches.of(1.0).in(Meters), Rotation2d.fromDegrees(180));
+      new Transform2d((0.883 / 2.0) + 0.1, -Inches.of(1.0).in(Meters), Rotation2d.fromDegrees(183));
 
   private Transform2d rightrobotBranchScoringOffset =
       new Transform2d((0.883 / 2.0) + 0.1, Inches.of(1.0).in(Meters), Rotation2d.fromDegrees(185));
@@ -108,7 +108,7 @@ public class TargetingSystem {
   }
 
   public void setBranchSide(ReefBranchSide side) {
-    // Logger.recordOutput("TargetingSystem/Branch Side", side);
+    Logger.recordOutput("TargetingSystem/Branch Side", side);
     reefBranchSide = side;
     if (side == ReefBranchSide.LEFT) {
       Leds.getInstance().leftReefSelected = true;

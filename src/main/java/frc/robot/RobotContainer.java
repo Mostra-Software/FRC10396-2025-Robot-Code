@@ -178,6 +178,21 @@ public class RobotContainer {
     NamedCommands.registerCommand("Pathsiz_align", getLeftAutoAlignedScore());
 
     NamedCommands.registerCommand("run_intakke", new Intake(outtake, driverJoy, targetingSystem));
+    NamedCommands.registerCommand(
+        "Elev_shoot",
+        new SequentialCommandGroup(
+                new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+                new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+                new Shoot(outtake).withTimeout(1.0),
+                new HomeElevator(elevator))
+            .withTimeout(2.0));
+
+    NamedCommands.registerCommand(
+        "left_align",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+                .andThen(new AutoAlign(drive, targetingSystem))
+                .withTimeout(4)));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

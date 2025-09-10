@@ -5,14 +5,17 @@
   "pathFolders": [
     "G_H_L4",
     "H_C_D_L1",
-    "I_L_K_L1"
+    "I_L_K_L1",
+    "off",
+    "eski"
   ],
   "autoFolders": [
     "BENCH",
-    "FAR"
+    "FAR",
+    "eski"
   ],
   "defaultMaxVel": 1.0,
-  "defaultMaxAccel": 1.0,
+  "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
