@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "run_shooter_trigger",
+      "name": "",
       "waypointRelativePos": 0.85,
       "endWaypointRelativePos": null,
       "command": null

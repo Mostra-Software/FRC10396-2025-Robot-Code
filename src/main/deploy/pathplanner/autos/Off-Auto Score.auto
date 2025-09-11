@@ -7,13 +7,19 @@
         {
           "type": "named",
           "data": {
-            "name": "left_align"
+            "name": "left_align_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "bench_hp_1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Elev_shoot"
+            "name": "run_intake"
           }
         }
       ]

@@ -7,13 +7,13 @@
         {
           "type": "named",
           "data": {
-            "name": "set_l3"
+            "name": null
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Pathsiz_align"
+            "name": null
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "run_intakke"
+            "name": null
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Pathsiz_align"
+            "name": null
           }
         }
       ]

@@ -49,7 +49,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "run_intake_trigger",
+      "name": "",
       "waypointRelativePos": 1.8476873342175155,
       "endWaypointRelativePos": null,
       "command": null

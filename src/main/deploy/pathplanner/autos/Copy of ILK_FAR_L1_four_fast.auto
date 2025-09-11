@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "auto_align"
+            "name": null
           }
         }
       ]

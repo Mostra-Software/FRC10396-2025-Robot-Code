@@ -169,30 +169,34 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
+    
     NamedCommands.registerCommand(
-        "auto_align",
-        new ParallelCommandGroup(
-            new InstantCommand(() -> System.out.println("ASDFGFDSZASDSADASDAQSDDSADDSADSA")),
-            new AutoAlign(drive, targetingSystem).withTimeout(10)));
+        "run_intakke", 
+            new Intake(outtake, driverJoy, targetingSystem).until(outtake::hasGP));
 
-    NamedCommands.registerCommand("Pathsiz_align", getLeftAutoAlignedScore());
-
-    NamedCommands.registerCommand("run_intakke", new Intake(outtake, driverJoy, targetingSystem));
     NamedCommands.registerCommand(
-        "Elev_shoot",
+        "left_align_shoot",
         new SequentialCommandGroup(
-                new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
-                new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
-                new Shoot(outtake).withTimeout(1.0),
-                new HomeElevator(elevator))
-            .withTimeout(2.0));
+        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+            .andThen(new AutoAlign(drive, targetingSystem))
+            .withTimeout(4),
+        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+        new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+        new Shoot(outtake).withTimeout(1.0),
+        new HomeElevator(elevator).until(elevator::isHome)));
 
     NamedCommands.registerCommand(
-        "left_align",
+        "right_align_shoot",
         new SequentialCommandGroup(
-            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
-                .andThen(new AutoAlign(drive, targetingSystem))
-                .withTimeout(4)));
+        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT))
+            .andThen(new AutoAlign(drive, targetingSystem))
+            .withTimeout(4),
+        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+        new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+        new Shoot(outtake).withTimeout(1.0),
+        new HomeElevator(elevator).until(elevator::isHome)));  
+
+
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -200,7 +204,7 @@ public class RobotContainer {
     autoChooser.addOption("Auto Alignli Left", getLeftAutoAlignedScore());
 
     autoChooser.addOption("Auto Alignli Right", getRightAutoAlignedScore());
-    autoChooser.addOption("TwoCoralLeft", getTwoCoralAutoLeft());
+    //autoChooser.addOption("TwoCoralLeft", getTwoCoralAutoLeft());
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -218,11 +222,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // Named Commands for Auton
-    NamedCommands.registerCommand(
-        "L4_Shoot", new AutoScore(elevator, outtake, elevator::isAtSetpoint, targetingSystem));
-
-    NamedCommands.registerCommand("wait_until_has_gp", new WaitCommand(10).until(outtake::hasGP));
 
     // Event Triggers for Auton
     new EventTrigger("run_intake_trigger")

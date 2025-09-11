@@ -13,13 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": "auto_align"
+            "name": null
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L4_Shoot"
+            "name": null
           }
         },
         {
@@ -37,13 +37,13 @@
         {
           "type": "named",
           "data": {
-            "name": "auto_align"
+            "name": null
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L4_Shoot"
+            "name": null
           }
         }
       ]
