@@ -7,61 +7,49 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "left_align_shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Start_I_Score"
+            "pathName": "bench_hp_1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "run_intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "left_align_shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "I_Hp"
+            "pathName": "bench_hp_2"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "HP_L_Score"
+            "name": "run_intake"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "L_HP"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HP_L_Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L_HP"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HP_K"
+            "name": "right_align_shoot"
           }
         }
       ]
     }
   },
   "resetOdom": false,
-  "folder": "FAR",
+  "folder": null,
   "choreoAuto": false
 }

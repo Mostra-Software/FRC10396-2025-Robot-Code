@@ -97,6 +97,16 @@ public class AutoAlign extends Command {
             omega);
     // Logger.recordOutput("TargetingSystem/Auto Align Chassis Speeds", speeds);
 
+    /*Logger.recordOutput(
+    "TargetingSystem/Auto Align Delta Thetha",
+    Math.abs(currPose.getRotation().getDegrees() - targetPose.getRotation().getDegrees())); */
+
+    /* Logger.recordOutput(
+    "TargetingSystem/Auto Align Delta X", Math.abs(currPose.getX() - targetPose.getX())); */
+
+    /*  Logger.recordOutput(
+    "TargetingSystem/Auto Align Delta Y", Math.abs(currPose.getY() - targetPose.getY())); */
+
     boolean isFlipped =
         DriverStation.getAlliance().isPresent()
             && DriverStation.getAlliance().get() == Alliance.Red;
@@ -113,8 +123,9 @@ public class AutoAlign extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Math.abs(delta.getX()) < 0.01
-        && Math.abs(delta.getY()) < 0.01
-        && Math.abs(delta.getRotation().getDegrees()) < 1);
+    return (Math.abs(currPose.getX() - targetPose.getX()) < 0.01
+        && Math.abs(currPose.getY() - targetPose.getY()) < 0.01
+        && Math.abs(currPose.getRotation().getDegrees() - targetPose.getRotation().getDegrees())
+            < 1);
   }
 }

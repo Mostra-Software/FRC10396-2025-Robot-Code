@@ -7,43 +7,49 @@
         {
           "type": "named",
           "data": {
-            "name": null
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": null
+            "name": "left_align_shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "trig_bench_hp_1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "hasGP"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of New Path"
+            "pathName": "trig_bench_shoot_1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "left_align_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "trig_bench_hp_2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "right_align_shoot"
           }
         }
       ]
     }
   },
   "resetOdom": false,
-  "folder": "eski",
+  "folder": null,
   "choreoAuto": false
 }

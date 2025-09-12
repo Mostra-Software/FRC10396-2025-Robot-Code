@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -169,34 +170,45 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
-    
-    NamedCommands.registerCommand(
-        "run_intakke", 
-            new Intake(outtake, driverJoy, targetingSystem).until(outtake::hasGP));
+
+    NamedCommands.registerCommand("run_intake", new Intake(outtake, driverJoy, targetingSystem));
 
     NamedCommands.registerCommand(
         "left_align_shoot",
         new SequentialCommandGroup(
-        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
-            .andThen(new AutoAlign(drive, targetingSystem))
-            .withTimeout(4),
-        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
-        new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
-        new Shoot(outtake).withTimeout(1.0),
-        new HomeElevator(elevator).until(elevator::isHome)));
+            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+                .andThen(new AutoAlign(drive, targetingSystem))
+                .withTimeout(3),
+            new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L3)),
+            new ParallelRaceGroup(
+                new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
+            new Shoot(outtake).withTimeout(0.5),
+            new HomeElevator(elevator).until(elevator::isHome)));
 
     NamedCommands.registerCommand(
         "right_align_shoot",
         new SequentialCommandGroup(
-        new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT))
-            .andThen(new AutoAlign(drive, targetingSystem))
-            .withTimeout(4),
-        new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
-        new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
-        new Shoot(outtake).withTimeout(1.0),
-        new HomeElevator(elevator).until(elevator::isHome)));  
+            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT))
+                .andThen(new AutoAlign(drive, targetingSystem))
+                .withTimeout(3),
+            new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L3)),
+            new ParallelRaceGroup(
+                new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
+            new Shoot(outtake).withTimeout(0.5),
+            new HomeElevator(elevator).until(elevator::isHome)));
 
+    NamedCommands.registerCommand(
+        "hasGP",
+        new ParallelCommandGroup(
+                new InstantCommand(() -> System.out.println("44444444")), new WaitCommand(10))
+            .until(outtake::hasGP));
 
+    new EventTrigger("run_intake_trigger")
+        .whileTrue(new Intake(outtake, driverJoy, targetingSystem));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -204,7 +216,7 @@ public class RobotContainer {
     autoChooser.addOption("Auto Alignli Left", getLeftAutoAlignedScore());
 
     autoChooser.addOption("Auto Alignli Right", getRightAutoAlignedScore());
-    //autoChooser.addOption("TwoCoralLeft", getTwoCoralAutoLeft());
+    // autoChooser.addOption("TwoCoralLeft", getTwoCoralAutoLeft());
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -221,28 +233,6 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-
-    // Event Triggers for Auton
-    new EventTrigger("run_intake_trigger")
-        .whileTrue(new Intake(outtake, driverJoy, targetingSystem).withTimeout(3));
-
-    new EventTrigger("run_shooter_trigger").whileTrue(new Shoot(outtake).withTimeout(1));
-
-    new EventTrigger("set_l4")
-        .whileTrue(
-            new InstantCommand(() -> targetingSystem.setCoralMode())
-                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L4))));
-
-    new EventTrigger("set_l3")
-        .whileTrue(
-            new InstantCommand(() -> targetingSystem.setCoralMode())
-                .andThen(Commands.runOnce(() -> targetingSystem.setTarget(ReefBranchLevel.L3))));
-
-    new EventTrigger("set_left")
-        .whileTrue(new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT)));
-    new EventTrigger("set_right")
-        .whileTrue(new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT)));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -390,8 +380,7 @@ public class RobotContainer {
         .whileTrue(new Intake(outtake, driverJoy, targetingSystem))
         .onFalse(getStopIntakeCommand());
 
-    // deAlg disabled until assembly
-    // operatorJoy.R1().whileTrue(new DeAlg(outtake));
+    operatorJoy.button(11).whileTrue(new HomeAlgae(outtake));
 
     // Manuel Feed for Outtake
     operatorJoy.button(6).whileTrue(new RunOuttake(true, 0.15, outtake));
