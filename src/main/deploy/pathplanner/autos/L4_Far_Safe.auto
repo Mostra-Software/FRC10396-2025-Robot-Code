@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "l4_right_align_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "far_hp_1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "run_intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "l4_right_align_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "far_hp_2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "run_intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "l4_left_align_shoot"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -202,6 +202,34 @@ public class RobotContainer {
             new HomeElevator(elevator).until(elevator::isHome)));
 
     NamedCommands.registerCommand(
+        "l4_left_align_shoot",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+                .andThen(new AutoAlign(drive, targetingSystem))
+                .withTimeout(3),
+            new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+            new ParallelRaceGroup(
+                new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
+            new Shoot(outtake).withTimeout(0.5),
+            new HomeElevator(elevator).until(elevator::isHome)));
+
+    NamedCommands.registerCommand(
+        "l4_right_align_shoot",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT))
+                .andThen(new AutoAlign(drive, targetingSystem))
+                .withTimeout(3),
+            new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+            new ParallelRaceGroup(
+                new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
+            new Shoot(outtake).withTimeout(0.5),
+            new HomeElevator(elevator).until(elevator::isHome)));
+
+    NamedCommands.registerCommand(
         "hasGP",
         new ParallelCommandGroup(
                 new InstantCommand(() -> System.out.println("44444444")), new WaitCommand(10))
