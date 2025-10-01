@@ -33,7 +33,7 @@ public class TargetingSystem {
       new Transform2d((0.883 / 2.0) + 0.1, -Inches.of(1.0).in(Meters), Rotation2d.fromDegrees(183));
 
   private Transform2d rightrobotBranchScoringOffset =
-      new Transform2d((0.883 / 2.0) + 0.1, Inches.of(1.0).in(Meters), Rotation2d.fromDegrees(177));
+      new Transform2d((0.883 / 2.0) + 0.1, Inches.of(1.0).in(Meters), Rotation2d.fromDegrees(187));
   private Transform2d robotHPOffset =
       new Transform2d((0.883 / 2.0) + 0.1, Inches.of(0).in(Meters), Rotation2d.fromDegrees(0));
 
