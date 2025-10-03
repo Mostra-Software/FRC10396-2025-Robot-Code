@@ -195,7 +195,7 @@ public class RobotContainer {
                 .withTimeout(3),
             new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L3)),
             new ParallelRaceGroup(
-                new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
+                new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
             new Shoot(outtake).withTimeout(0.5),
@@ -223,7 +223,7 @@ public class RobotContainer {
                 .withTimeout(4),
             new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
             new ParallelRaceGroup(
-                new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+                new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
             new Shoot(outtake).withTimeout(0.5),
