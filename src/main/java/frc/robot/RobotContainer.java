@@ -212,6 +212,7 @@ public class RobotContainer {
                 new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
+            new WaitCommand(0.5),
             new Shoot(outtake).withTimeout(0.5),
             new HomeElevator(elevator).until(elevator::isHome)));
 
@@ -226,6 +227,7 @@ public class RobotContainer {
                 new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
+            new WaitCommand(0.5),
             new Shoot(outtake).withTimeout(0.5),
             new HomeElevator(elevator).until(elevator::isHome)));
 
