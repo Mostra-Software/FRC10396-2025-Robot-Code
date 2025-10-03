@@ -206,7 +206,7 @@ public class RobotContainer {
         new SequentialCommandGroup(
             new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
                 .andThen(new AutoAlign(drive, targetingSystem))
-                .withTimeout(3),
+                .withTimeout(4),
             new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
             new ParallelRaceGroup(
                 new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
@@ -220,7 +220,7 @@ public class RobotContainer {
         new SequentialCommandGroup(
             new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT))
                 .andThen(new AutoAlign(drive, targetingSystem))
-                .withTimeout(3),
+                .withTimeout(4),
             new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
             new ParallelRaceGroup(
                 new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
