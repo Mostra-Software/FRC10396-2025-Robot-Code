@@ -453,7 +453,7 @@ public class RobotContainer {
             .andThen(new AutoAlign(drive, targetingSystem))
             .withTimeout(4),
         new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
-        new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+        new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
         new Shoot(outtake).withTimeout(1.0),
         new HomeElevator(elevator));
   }
@@ -464,7 +464,7 @@ public class RobotContainer {
             .andThen(new AutoAlign(drive, targetingSystem))
             .withTimeout(4),
         new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L3)),
-        new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
+        new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
         new Shoot(outtake).withTimeout(1.0),
         new HomeElevator(elevator));
   }
