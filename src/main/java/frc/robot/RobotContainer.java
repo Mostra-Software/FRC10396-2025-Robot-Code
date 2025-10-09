@@ -48,7 +48,6 @@ import frc.robot.commands.outtake.DeAlg;
 import frc.robot.commands.outtake.HomeAlgae;
 import frc.robot.commands.outtake.Intake;
 import frc.robot.commands.outtake.RunDealg;
-import frc.robot.commands.outtake.RunOuttake;
 import frc.robot.commands.outtake.Shoot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
@@ -410,10 +409,10 @@ public class RobotContainer {
         .whileTrue(new Intake(outtake, driverJoy, targetingSystem))
         .onFalse(getStopIntakeCommand());
 
-    operatorJoy.button(11).whileTrue(new HomeAlgae(outtake));
+    operatorJoy.button(6).whileTrue(new HomeAlgae(outtake));
 
     // Manuel Feed for Outtake
-    operatorJoy.button(6).whileTrue(new RunOuttake(true, 0.15, outtake));
+    // operatorJoy.button(6).whileTrue(new RunOuttake(true, 0.15, outtake));
 
     operatorJoy.povLeft().whileTrue(new RunDealg(outtake, false));
     operatorJoy.povRight().whileTrue(new RunDealg(outtake, true));
