@@ -409,7 +409,7 @@ public class RobotContainer {
         .whileTrue(new Intake(outtake, driverJoy, targetingSystem))
         .onFalse(getStopIntakeCommand());
 
-    operatorJoy.button(6).whileTrue(new HomeAlgae(outtake));
+    operatorJoy.button(11).whileTrue(new HomeAlgae(outtake));
 
     // Manuel Feed for Outtake
     // operatorJoy.button(6).whileTrue(new RunOuttake(true, 0.15, outtake));
