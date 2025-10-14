@@ -13,11 +13,17 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
+import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
+import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
+import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
+import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
+
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -60,7 +66,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
-import frc.robot.subsystems.leds.*;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeIO;
 import frc.robot.subsystems.outtake.OuttakeIOSim;
@@ -74,7 +80,6 @@ import frc.robot.util.TargetingSystem;
 import frc.robot.util.TargetingSystem.ReefBranchLevel;
 import frc.robot.util.TargetingSystem.ReefBranchSide;
 import lombok.experimental.ExtensionMethod;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -226,6 +231,19 @@ public class RobotContainer {
                 new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
+            new WaitCommand(0.5),
+            new Shoot(outtake).withTimeout(0.5),
+            new HomeElevator(elevator).until(elevator::isHome)));
+
+    NamedCommands.registerCommand(
+        "fix_l4_left_align_shoot",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+                .andThen(new AutoAlign(drive, targetingSystem))
+                .withTimeout(4),
+            new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+                new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
+                new WaitCommand(10).until(elevator::isAtSetpoint),
             new WaitCommand(0.5),
             new Shoot(outtake).withTimeout(0.5),
             new HomeElevator(elevator).until(elevator::isHome)));
