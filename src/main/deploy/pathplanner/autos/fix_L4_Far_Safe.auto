@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "new_far"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "fix_l4_left_align_shoot"
+            "name": "fix_l4_right_align_shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "bench_hp_1"
+            "pathName": "far_hp_1"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "bench_hp_2"
+            "pathName": "far_hp_2"
           }
         },
         {
@@ -49,7 +49,7 @@
         {
           "type": "named",
           "data": {
-            "name": "l4_right_align_shoot"
+            "name": "fix_l4_left_align_shoot"
           }
         }
       ]

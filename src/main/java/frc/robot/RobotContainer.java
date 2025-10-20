@@ -18,12 +18,9 @@ import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -80,6 +77,7 @@ import frc.robot.util.TargetingSystem;
 import frc.robot.util.TargetingSystem.ReefBranchLevel;
 import frc.robot.util.TargetingSystem.ReefBranchSide;
 import lombok.experimental.ExtensionMethod;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -184,11 +182,13 @@ public class RobotContainer {
                 .andThen(new AutoAlign(drive, targetingSystem))
                 .withTimeout(3),
             new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L2)),
+            new WaitCommand(1),
             new ParallelRaceGroup(
                 new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
-            new Shoot(outtake).withTimeout(0.5),
+            new WaitCommand(1),
+            new Shoot(outtake).withTimeout(1.0),
             new HomeElevator(elevator).until(elevator::isHome)));
 
     NamedCommands.registerCommand(
@@ -198,11 +198,13 @@ public class RobotContainer {
                 .andThen(new AutoAlign(drive, targetingSystem))
                 .withTimeout(3),
             new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L2)),
+            new WaitCommand(1),
             new ParallelRaceGroup(
                 new AutoReefHeight(elevator, targetingSystem).withTimeout(2),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5), new WaitCommand(10).until(elevator::isAtSetpoint))),
-            new Shoot(outtake).withTimeout(0.5),
+            new WaitCommand(1),
+            new Shoot(outtake).withTimeout(1.0),
             new HomeElevator(elevator).until(elevator::isHome)));
 
     NamedCommands.registerCommand(
@@ -242,8 +244,34 @@ public class RobotContainer {
                 .andThen(new AutoAlign(drive, targetingSystem))
                 .withTimeout(4),
             new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
-                new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
-                new WaitCommand(10).until(elevator::isAtSetpoint),
+            new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
+            new WaitCommand(1).until(elevator::isAtSetpoint),
+            new WaitCommand(0.5),
+            new Shoot(outtake).withTimeout(0.5),
+            new HomeElevator(elevator).until(elevator::isHome)));
+
+    NamedCommands.registerCommand(
+        "fix_l4_left_align_shoot",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.LEFT))
+                .andThen(new AutoAlign(drive, targetingSystem))
+                .withTimeout(4),
+            new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+            new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
+            new WaitCommand(1).until(elevator::isAtSetpoint),
+            new WaitCommand(0.5),
+            new Shoot(outtake).withTimeout(0.5),
+            new HomeElevator(elevator).until(elevator::isHome)));
+
+    NamedCommands.registerCommand(
+        "fix_l4_right_align_shoot",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> targetingSystem.setBranchSide(ReefBranchSide.RIGHT))
+                .andThen(new AutoAlign(drive, targetingSystem))
+                .withTimeout(4),
+            new InstantCommand(() -> targetingSystem.setTarget(ReefBranchLevel.L4)),
+            new AutoReefHeight(elevator, targetingSystem).withTimeout(3),
+            new WaitCommand(1).until(elevator::isAtSetpoint),
             new WaitCommand(0.5),
             new Shoot(outtake).withTimeout(0.5),
             new HomeElevator(elevator).until(elevator::isHome)));
@@ -348,7 +376,7 @@ public class RobotContainer {
         elevator::isHome)); */
 
     operatorJoy
-        .button(12)
+        .button(6)
         .whileTrue(
             new SequentialCommandGroup(
                 Commands.runOnce(() -> targetingSystem.setAlgaeMode()),
